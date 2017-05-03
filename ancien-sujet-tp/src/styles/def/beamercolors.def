@@ -1,0 +1,99 @@
+\mode<presentation>
+
+\setbeamercolor{structure}{fg=blue}
+
+\setbeamercolor*{palette primary}{use=structure,fg=white,bg=structure.fg}
+\setbeamercolor*{palette secondary}{use=structure,fg=white,bg=structure.fg!75!black}
+\setbeamercolor*{palette tertiary}{use=structure,fg=white,bg=structure.fg!50!black}
+\setbeamercolor*{palette quaternary}{fg=red,bg=yellow}
+
+\setbeamercolor*{palette sidebar primary}{use=structure,fg=structure.fg!10}
+\setbeamercolor*{palette sidebar secondary}{fg=white}
+\setbeamercolor*{palette sidebar tertiary}{use=structure,fg=structure.fg!50}
+\setbeamercolor*{palette sidebar quaternary}{fg=white}
+ 
+\setbeamercolor{frametitle}{fg=white,bg=blue}
+\setbeamercolor{frametitle right}{fg=white,bg=cyan}
+
+\setbeamercolor{local structure}{use=structure,fg=green}
+\setbeamercolor{item projected}{parent=item,use=item,fg=black,bg=item.fg}
+
+\setbeamercolor{section in toc}{use=structure,fg=red}
+\setbeamercolor{section number projected}{fg=black}
+
+\setbeamercolor{block title}{use=structure,fg=white,bg=blue}
+\setbeamercolor{block title alerted}{use=alerted text,fg=white,bg=alerted text.fg!75!black}
+\setbeamercolor{block title example}{use=example text,fg=white,bg=example text.fg!75!black}
+
+\setbeamercolor{block body}{parent=normal text,use=block title,bg=white}
+\setbeamercolor{block body alerted}{parent=normal text,use=block title alerted,bg=block title alerted.bg!10!bg}
+\setbeamercolor{block body example}{parent=normal text,use=block title example,bg=block title example.bg!10!bg}
+
+\colorlet{marvel@beamer@block@rulecolor}{NavyBlue}
+\colorlet{marvel@beamer@blockshadow@color}{NavyBlue!50!white}
+\colorlet{marvel@beamer@blockshadow@rulecolor}{NavyBlue!50!white}
+
+\setbeamercolor*{sidebar}{use=structure,bg=structure.fg,bg=yellow}
+  
+\setbeamercolor*{titlelike}{parent=palette primary}
+
+\setbeamercolor*{separation line}{}
+\setbeamercolor*{fine separation line}{}
+
+\setbeamercolor*{author in head/foot}{fg=black,bg=cyan!70!blue}
+\setbeamercolor*{title in head/foot}{fg=white,bg=blue!70!cyan}
+\setbeamercolor*{date in head/foot}{fg=black,bg=cyan!70!blue}
+
+
+\setbeamercolor*{section in head/foot}{fg=white,bg=blue!50!black}
+\setbeamercolor*{subsection in head/foot}{fg=white,bg=cyan!50!blue} 
+
+%\setbeamertemplate{background canvas}[vertical shading][top={white},bottom={blue!5!white}] 
+\setbeamercolor*{title}{fg=white,bg=blue}
+
+\setbeamercolor*{marvelboxes upper}{fg=white,bg=blue}
+\setbeamercolor*{marvelboxes lower}{fg=black,bg=white}
+\setbeamercolor*{marvelboxes upper border}{use=marvelboxes uppper,fg=blue}
+\setbeamercolor*{marvelboxes lower border}{use=marvelboxes upper,fg=blue}
+\setbeamercolor*{marvelboxes upper shadow}{use=marvelboxes upper,fg=blue!50!white,bg=blue!50!white}
+\setbeamercolor*{marvelboxes lower shadow}{use=marvelboxes upper,fg=blue!50!white,bg=blue!50!white}
+
+\setbeamercolor*{marvelboxes part booktitle}{fg=white,bg=blue}
+\setbeamercolor*{marvelboxes part booktitle border}{use=marvelboxes uppper,fg=blue}
+\setbeamercolor*{marvelboxes part booktitle shadow}{use=marvelboxes upper,fg=blue!50!white,bg=blue!50!white}
+
+
+\setbeamercolor*{marvelboxes part title}{fg=black,bg=blue!30}
+\setbeamercolor*{marvelboxes part title border}{use=marvelboxes upper,fg=blue}
+\setbeamercolor*{marvelboxes part title shadow}{use=marvelboxes upper,fg=blue!50!white,bg=blue!50!white}
+
+\setbeamercolor*{marvelboxes section}{fg=black,bg=blue!30}
+\setbeamercolor*{marvelboxes section border}{use=marvelboxes upper,fg=blue}
+\setbeamercolor*{marvelboxes section shadow}{use=marvelboxes upper,fg=blue!50!white,bg=blue!50!white}
+
+\setbeamercolor*{marvelboxes subsection}{fg=white,bg=blue}
+\setbeamercolor*{marvelboxes subsection border}{use=marvelboxes uppper,fg=blue}
+\setbeamercolor*{marvelboxes subsection shadow}{use=marvelboxes upper,fg=blue!50!white,bg=blue!50!white}
+
+
+\usefonttheme{structurebold}
+\setbeamerfont{title}{size=\Large,series=\bfseries,parent=structure}
+\setbeamerfont{subtitle}{size=\large,series=\bfseries,parent=structure}
+\setbeamerfont{author}{size=\Large,series=\bfseries,parent=structure}
+\setbeamerfont{author extra}{size=\small,series=\bfseries,parent=structure}
+\setbeamerfont{institute}{size=\scriptsize,series=\bfseries,parent=structure}
+\setbeamerfont{date}{size=\scriptsize,series=\bfseries,parent=structure}
+
+\setbeamerfont{part booktitle}{series=\bfseries,size=\Large,parent=structure}
+\setbeamerfont{part booksubtitle}{series=\bfseries,parent=structure}
+\setbeamerfont{part name}{size=\Large,series=\bfseries,parent=structure}
+\setbeamerfont{section}{size=\Large,series=\bfseries,parent=structure}
+\setbeamerfont{subsection}{size=\large,series=\bfseries,parent=structure}
+
+
+\setbeamerfont{frametitle}{size=\Large,series=\bfseries}
+
+\setbeamerfont{marvelboxes title}{series=\bfseries}
+\setbeamerfont{marvelboxes body}{}
+
+\mode<all>

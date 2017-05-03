@@ -1,0 +1,49 @@
+\defbeamertemplate*{title page}{marvel}[1][]
+{
+  \vbox{}
+  \vfill
+  \begin{centering}
+    \begin{marvelboxes}{upper=title,lower=title}{}
+    \begin{centering}
+      \usebeamerfont{title}\marvel@title\par%
+      \ifx\marvel@subtitle\@empty%
+      \else%
+        \vskip0.25em%
+        {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\marvel@subtitle\par}%
+      \fi%
+    \end{centering} 
+    \end{marvelboxes}%
+    \vskip2em\par
+    \begin{beamercolorbox}[sep=8pt,center,#1]{author}
+      \usebeamerfont{author}\marvel@author\par%
+      \ifx\marvel@titlepageauthorextra\@empty%
+      \else%
+        \vskip0.25em%
+        {\usebeamerfont{author extra}\usebeamercolor[fg]{author extra}\marvel@titlepageauthorextra\par}%
+      \fi%      
+    \end{beamercolorbox}
+    \begin{beamercolorbox}[sep=8pt,center,#1]{institute}
+      \usebeamerfont{institute}\marvel@titlepageinstitute
+    \end{beamercolorbox}
+    \vskip0.5em
+    {\usebeamercolor[fg]{titlegraphic}\marvel@titlepagelogo\par}
+    \ifx\marvel@date\@empty%
+    \else% 
+      \vskip0.5em
+      \begin{beamercolorbox}[sep=8pt,center,#1]{date}
+        \usebeamerfont{date}\marvel@date
+      \end{beamercolorbox}
+    \fi%  
+  \end{centering}
+  \vfill 
+}
+
+\setbeamertemplate{title page}[marvel][colsep=-4bp]
+
+\def\maketitle{%
+	\setbeamertemplate{background canvas}[default]
+	\setbeamercolor{background canvas}{bg=white}
+	\ifbeamer@inframe\titlepage\else\frame[plain,noframenumbering]{\titlepage}\fi%
+	\setbeamertemplate{background canvas}[vertical shading][top={white},bottom={blue!15!white}] 
+}
+

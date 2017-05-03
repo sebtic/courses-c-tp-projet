@@ -1,0 +1,53 @@
+
+% #1 category (warning...)
+% #2 extra text
+% #3 content
+\newcommand{\marvel@specialblocktitle}[3]{%
+    \setlength\fboxrule{\FrameRule}\setlength\fboxsep{\FrameSep}%
+    \noindent\fcolorbox{marvel@#1@bordercolor}{marvel@#1@backgroundcolor}{%
+    	\begin{minipage}{\hsize-3\FrameSep+2pt}%  
+       		\ifcsempty{marvel@#1@title}{%
+       		}%
+       		{                 
+	            \setlength{\tabcolsep}{2pt}%
+	            \tabulinesep=2pt%   
+	            \tabulinestyle{1pt}      
+	            \taburulecolor{marvel@#1@rulecolor}%
+	            \taburowcolors 2 {marvel@#1@titlebackgroundcolor .. marvel@#1@titlebackgroundcolor}%
+	            \noindent\begin{tabu*}{X[-1,c,m]X[m]}%
+	            {\expandafter\csname marvel@#1@icon\endcsname}&%
+	            \color{marvel@#1@titlecolor}%
+	            \expandafter\csname marvel@#1@titlefont\endcsname%
+	            \expandafter\csname marvel@#1@title\endcsname%
+	            \ifbool{marvel@#1@numbered}{~\arabic{marvel@#1@counter}}{}%
+	            \expandafter\csname marvel@#1@titleextrafont\endcsname%
+	            #2%
+	            \\\hline%
+	            \end{tabu*}\vspace{\csname marvel@#1@aftertitlevskip\endcsname}%
+	        }
+            \color{marvel@#1@textcolor}\noindent{}%
+            #3\vspace{1ex plus 0.2ex minus 0.2ex} %
+       \end{minipage}%
+    }
+}  
+
+\newenvironment{marvel@specialblock}[1]%
+{
+  \ifbool{marvel@#1@numbered}{\refstepcounter{marvel@#1@counter}}{}
+  \par
+  \setlength{\FrameSep}{1ex}
+  \setlength{\FrameRule}{1pt}
+  \setlength\fboxrule{\FrameRule}
+  \setlength\fboxsep{\FrameSep}
+  \def\FrameCommand##1{\marvel@specialblocktitle{#1}{}{##1}}
+  \def\FirstFrameCommand##1{\marvel@specialblocktitle{#1}{\csname marvel@specialblockbegin\endcsname}{##1}}
+  \def\MidFrameCommand##1{\marvel@specialblocktitle{#1}{\csname marvel@specialblockcontinue\endcsname}{##1}}
+  \def\LastFrameCommand##1{\marvel@specialblocktitle{#1}{\csname marvel@specialblockend\endcsname}{##1}}
+  \MakeFramed{%
+  	\@totalleftmargin\z@% remove leftmargin like in itemize
+  	\addtolength{\hsize}{-2\FrameSep-2\FrameRule}\FrameRestore%
+  }
+}%
+{
+  \endMakeFramed
+}

@@ -1,0 +1,11 @@
+\frenchspacing
+\setlength{\parskip}{1ex plus 0.5ex minus 0.5ex}
+\setlength{\topsep}{1pt plus 1pt minus 1pt}
+\setlength{\parsep}{\parskip}
+\setlength{\itemsep}{1pt plus 1pt minus 1pt}
+\setlength{\partopsep}{1pt plus 1pt minus 1pt}
+
+\widowpenalty=300
+\clubpenalty=300
+
+\setlength{\parindent}{0in}

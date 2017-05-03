@@ -1,0 +1,81 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% REFERENCES INTERNES (partie 1 : extension de ref et label)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\RequirePackage[user]{zref}
+
+% ATTENTION : le code suivant doit s'executer avant le chargement du package typedref
+\zref@newprop{chapter}{}
+\zref@newprop{isappendix}{}
+\zref@addprop{main}{chapter}
+\zref@addprop{main}{isappendix}
+
+\let\oldref=\ref
+\renewcommand{\ref}[1]{%
+  \zrefused{#1}%
+  \gdef\refchapternumber{\zref@extract{#1}{chapter}}%
+  \gdef\refchapterisappendix{\zref@extract{#1}{isappendix}}
+  \oldref{#1}%
+}
+
+\let\oldlabel=\label
+\renewcommand{\label}[1]{%
+  \zref@setcurrent{chapter}{\thechapter}%
+  \ifnumequal{\thechapter}{\arabic{chapter}}%
+  {%
+    \zref@setcurrent{isappendix}{0}%
+  }%
+  {%
+    \zref@setcurrent{isappendix}{1}%
+  }%
+  \oldlabel{#1}%
+  \zlabel{#1}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% REFERENCES INTERNES (partie 2 : redefinition de ref et de ses variantes)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\RequirePackage{typedref}
+
+\sr@refname{appendix}{Annexe}{Annexes}
+\sr@refname{chapter}{Chapitre}{Chapitres}
+\sr@refname{figure}{Figure}{Figures}
+\sr@refname{footnote}{Note de bas de page}{Notes de bas de pages}
+\sr@refname{item}{Item}{Items}
+\sr@refname{paragraph}{Paragraphe}{Paragraphes}
+\sr@refname{part}{Partie}{Parties}
+\sr@refname{section}{Section}{Sections}
+\sr@refname{table}{Table}{Tables}
+\sr@refname{equation}{Equation}{Equations}
+\sr@refname{algo}{Algorithme}{Algorithmes}
+\sr@refname{exercice}{Exercice}{Exercices}
+\sr@refname{theorem}{Théorème}{Théorèšmes}
+
+\def\thesection{\arabic{section}}
+
+\let\oldsectionref=\sectionref
+\renewcommand{\sectionref}[1]{%
+  \gdef\refchapternumber{-1}
+  \gdef\refchapterisappendix{0}
+  \oldsectionref{#1}%
+  \ifnumequal{\refchapternumber}{-1}%
+  {%
+  }%
+  {%
+    \ifnumequal{\refchapternumber}{\thechapter}%
+    {}%
+    {%
+      \ifnumequal{\refchapterisappendix}{0}%
+      {%
+        \space{}du chapitre~\refchapternumber%
+      }%
+      {%
+        \space{}de l'annexe~\refchapternumber%
+      }%
+    }%
+    \xspace%
+  }%
+}
+
+

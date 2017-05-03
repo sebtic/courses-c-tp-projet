@@ -1,0 +1,732 @@
+\chapter{TP1.1 - Prise en main de l'environnement de travail}
+
+L'ensemble des séances de travaux pratiques se déroulement sous un environnement GNU/Linux. Pour cela, une machine virtuelle préconfigurée est mise à votre disposition.
+Cette machine virtuelle a été configurée pour qu'elle vous soit facile d'accès et de compréhension. Le nom de la machine virtuelle est \og{}Sabayon-C 2013\fg{}.
+
+\section{A chaque utilisation et avant d'exécuter la machine virtuelle}
+
+\subsection{Remise en état original de la machine virtuelle}
+
+Si la machine virtuelle possède un \og{}Instantané\fg{} ou \og{}Snapshot\fg{} nommé \og{}Master\fg{}. Vous devez le restaurer afin d'obtenir une machine virtuelle propre :
+\begin{enumerate}
+  \item Cliquez sur \og{}Instantané\fg{} ou \og{}Snapshot\fg{}
+  \item Cliquez sur \og{}Master\fg{}
+  \item Cliquez avec le bouton de droite et choisissez \og{}Restaurer instantané\fg{} ou \og{}Restore snapshot\fg{}.
+\end{enumerate}
+
+\begin{center}
+\pgfimage[height=8cm]{vm/vmrestore}
+\end{center}
+
+\subsection{Le dossier partagé}
+
+Avant l'exécution de la machine virtuelle, vous devez vous assurer que vos fichiers sont accessibles depuis le système GNU/Linux.
+
+Pour cela, sous VirtualBox, vous sélectionnez la machine virtuelle puis vous cliquez sur configuration. Vous devez aller dans la liste gauche sur \og{}Dossiers partagés\fg{} ou \og{}Shared folders\fg{}. Un partage portant le nom \og{}\verb-U-\fg{} doit être défini. Le chemin que vous spécifiez ici sera accéssible depuis le système GNU/Linux et cela vous permettra de stocker vos fichiers en dehors de la machine virtuelle. Ainsi, aucun de vos camarades ne pourra accèder à votre code en utilisant la même machine virtuelle. En standard dans les salles TP de l'école, le chemin doit être \og{}\verb-U:\-\fg{}.
+
+ 
+\begin{center}
+\pgfimage[height=9cm]{vm/vmconfig}
+\end{center}
+
+
+ \section{Démarrer la machine virtuelle}
+
+Démarrer la machine virtuelle en cliquant sur \og{}Démarrer\fg{} ou \og{}Start\fg{}. Après quelque seconde, vous devriez aboutir à un bureau KDE comme ci-dessous. 
+
+\begin{center}
+\pgfimage[height=10cm]{vm/vm}
+\end{center}
+
+L'organisation est très similaire à ce que l'on peut trouver sur d'autres systèmes d'exploitation telle que Windows. La partie principale contient un répertoire \og{}\verb|vbox-U| qui correspond au partage mis en place plus haut. En bas de l'écran, on trouve respectivement de gauche à droite : le menu démarrer, le menu des activités (non utile ici), le menu des bureaux (non utile ici), une icone permettant de lancer une console (ici il s'agit d'une console \verb-konsole-), une icone pour lancer l'explorateur de fichiers, une icone pour lancer le navigateur \verb-chromium- (identique à Google Chrome) et une icone pour lancer l'éditeur \verb-Code::Blocks-.
+Pour effectuer les travaux pratiques, vous utiliserez principalement ces quatre programmes.
+
+\subsection{Raccourcis clavier de VirtualBox}
+Par défaut sous VirtualBox, la touche \verb-Ctrl- située à droite du clavier est utilisée comme touche spéciale pour VirtualBox. Les principales combinaisons de touches qui peuvent vous être utiles sont :
+\begin{itemize}
+  \item \verb-Ctrl droite+F- pour passer en mode plein écran ou en sortir
+  \item \verb-Ctrl droite+F1-, \verb-Ctrl droite+F2-, \verb-Ctrl droite+F3-, \verb-Ctrl droite+F4-, \verb-Ctrl droite+F5-,\newline \verb-Ctrl droite+F6- pour accèder aux consoles textuelle du système GNU/Linux
+  \item \verb-Ctrl droite+F7- pour accèder à l'interface graphique
+\end{itemize}
+
+\begin{tipsandhints}
+Il est recommandé de travailler en mettant la machine virtuelle en plein écran pour plus de confort.
+\end{tipsandhints}
+
+\subsection{La console}
+
+Dans le cadre de ces travaux pratiques, vous serez amené à utiliser la console pour saisir des commandes. Il existe de nombreux programmes réalisant une console. Avec cette machine virtuelle, nous utiliserons le programme \og{}konsole\fg{}. Vous pouvez le démarrer en cliquant sur l'icone associée en bas de l'écran.
+
+Une console permet d'avoir accès à un invité de commande ou \og{}shell\fg{} pour effectuer des actions. Les principales commandes qui vous seront utiles sont données ci-dessous. Pour chacune de ces commandes, si \verb-X- contient des espaces, vous devez utiliser \verb-"X"- à la place. Sans espace, les guillemets ne sont pas nécessaires.
+
+\noindent\begin{tabu*}{|X[1]|X[2]|}
+\hline
+\verb'~'&Pour un chemin, cela représente le répertoire de l'utilisateur c'est-à-dire \verb-/home/user/-.\\\hline
+\verb'ls'&Liste le contenu du répertoire courant\\\hline
+\verb'ls -al'&Liste le contenu du répertoire courant\\\hline
+\verb'ls X'&Liste le contenu du répertoire \verb-X-\\\hline
+\verb'ls -al X'&Liste le contenu du répertoire \verb-X- avec plus de détails\\\hline
+\verb'pwd'&Affiche le chemin complet du répertoire courant\\\hline
+\verb'top'&Affiche l'utilisation du CPU par les processus (\verb-q- pour quitter, \verb-k- pour tuer un processus)\\\hline
+\verb'killall X'&Demande à un programme \verb-X- de s'arrêter\\\hline
+\verb'killall -s9 X'&Tue un programme \verb-X- qui ne veut pas s'arrêter tout seul\\\hline
+\verb'cd'&Le répertoire courant devient le répertoire de l'utilisateur (\verb-/home/user-)\\\hline
+\verb'cd X'&Le répertoire \verb-X- devient le répertoire courant\\\hline
+\verb'cd ..'&Le répertoire parent devient le répertoire courant\\\hline
+\verb'cmd | less'&Affiche progressivement page par page ce qu'affiche le programme \verb-cmd- (utilisez les flèches et la touche espace pour vous déplacer dans l'affichage, utilisez \verb-q- pour quitter)\\\hline
+\verb'rm X'&Efface le fichier \verb-X-\\\hline
+\verb'rm -rf X'&Efface le fichier \verb-X- ou le répertoire \verb-X- et son contenu de façon récursive sans demander confirmation\\\hline
+\verb'mkdir X'&Crée le répertoire \verb-X-\\\hline
+\verb'man X'&Permet d'obtenir la page de manuelle de la commande \verb-X-\\\hline
+\verb'man 3 X'&Permet d'obtenir la page de manuelle de la fonction \verb-X- du langage C\\\hline
+\end{tabu*}
+ 
+\subsection{Parce que parfois \texttt{Code::Blocks} bogue}
+
+Il peut arriver que \verb-Code::Blocks- bug et ne veuille plus démarrer ou tout simplement qu'il se fige et ne reponde plus. Il est nécessaire de distinguer les deux cas.
+
+\subsubsection{\texttt{Code::Blocks} ne démarre plus} 
+
+Ce bogue se produit lorsque \verb-Code::Blocks- a corrompu ses fichiers de configurations et n'arrive plus à les relire. Il vous suffit d'utiliser la commande suivante dans une console
+\begin{bashsource}
+killall -s9 codeblocks
+rm -rf ~/.codeblocks
+\end{bashsource}
+
+\subsubsection{\texttt{Code::Blocks} ne répond plus}
+
+ Il vous suffit d'utiliser la commande suivante dans une console
+  \begin{bashsource}
+killall codeblocks
+  \end{bashsource}
+  et si cela ne suffit pas, vous utilisez 
+  \begin{bashsource}
+killall -s9 codeblocks 
+  \end{bashsource}
+  
+\section{Utilisation de \texttt{Code::Blocks}}
+   
+Dans le cadre de ces TDs/TPs, vous aller travailler sur une application complète déjà configurée pour\linebreak \verb-Code::Blocks- dans laquelle vous aurez à remplacer des portions de code par votre propre code. Avant d'aborder cela, vous devez d'abord maitriser votre environnement de développement.
+
+\subsection{Création d'un projet \texttt{Code::Blocks}}
+
+\begin{enumerate}
+  \item Créez un projet du type console\footnote{\texttt{Code::Blocks} est capable de gérer de nombreux types de projet. Dans le cadre de ces TPs, nous nous limiterons au cas des projets du type console ou \og{}Console Application\fg{}.}.
+  \item On vous demande dans quel langage vous voulez le créer. Sélectionnez \og{}C\fg{}.
+  \item Choisissez un titre pour votre projet.
+  \item Choisissez le répertoire où créer le projet. Utilisez le sélecteur de fichier pour (1) créer un répertoire dans \verb'~/Desktop/vbox-U/' et (2) selectionnez le.
+  \begin{center}
+  \pgfimage[width=7cm]{vm/vmcbcreate}\hspace{0.5cm}
+  \pgfimage[width=7cm]{vm/vmcbcreate1}
+  \end{center}
+  \item Dans l'écran suivant, vous pouvez voir que deux cibles différentes sont crées : une version Debug et une version Release.
+  \item Vous avez accès à vos fichiers sur la gauche et à un éditeur sur la droite.
+\end{enumerate}
+
+\subsection{Paramétrage de la construction du programme}
+
+Le projet peut être paramétré via le menu \verb-Project-. Vous pouvez entre autres :
+\begin{itemize}
+  \item Ajouter ou retirer des fichiers du projet. 
+\begin{commonerrors}
+Lorsque vous ajoutez des fichiers sources, vous devez les ajouter à l'ensemble des \og{}Target\fg{} (c'est-à-dire Debug et Release) sinon ils ne seront pris en compte que pour les \og{}Target\fg{} qui les incluent.
+\end{commonerrors}
+  \item \verb-Set programs' arguments- permet de spécifier les paramètres à transmettre au programme lors de son exécution. Ces paramètres sont récupérés par le programme via les variables \verb-argc- et \verb-argv- de la fonction \verb-main-.
+  \item \verb-Build options- permet de définir les paramètres de compilation du programme.
+\end{itemize}
+
+\subsection{Construction et exécution du programme}
+    
+Pour construire/compiler votre programme, vous pouvez utiliser soit le menu \verb-Build-, soit les raccourcis claviers (recommandé), soit la barre d'outil.    
+\begin{itemize}
+  \item \verb-Build- : Compile uniquement les fichiers dépendant des fichiers modifiés depuis la dernière compilation et crée l'executable.
+  \item \verb-Run- : Execute le programme.
+  \begin{warning}
+  Le programme n'est pas compilé. Le programme exécuté correspond au dernier exécutable crée même si vous avez modifié le code depuis. 
+  \end{warning}
+  \item \verb-Build and run- : Compile et exécute votre programme
+  \item \verb-Rebuild- : Efface les fichiers déjà compilés et recompile tout le projet
+  \item \verb-Clean- : Efface les fichiers déjà compilés.
+  \item \verb-Select target- : Définit quelle est la version du programme concernée.  
+\end{itemize}
+ 
+\begin{commonerrors}
+N'utilisez pas la commande \verb-Build and run- ! Lors de la compilation, le compilateur peut vous donner des avertissements. Avec cette commande, vous ne vous en apercevez pas car immédiatement ces messages sont remplacés par la sortie d'affichage de votre programme. {\bf\color{red}Il est très fortement recommandé d'utiliser les commandes \verb-Build- puis \verb'Run' à la place.} 
+\end{commonerrors}
+
+\begin{center} 
+\begin{tabu}{X[c,m]X[c,m]}
+\pgfimage[height=5cm]{vm/vmbuild1}&
+\pgfimage[width=6cm]{vm/vmbuild2}
+\end{tabu}
+\end{center}
+    
+\subsection{Débuggage d'un programme}
+
+En général, chaque programme que vous développerez existera en deux versions : une version Debug et une version Release. Dans la version Debug, les temps d'éxécution sont plus long mais vous pouvez effectuer du déboggage de code. A l'opposé, la version Release est plus rapide mais elle ne permet pas de faire du deboggage. Le choix de l'une ou l'autre des versions s'effectue sous \verb-Code::blocks- en choisissant le bouton \verb-Build target- dans la barre d'outil ou via le menu \verb'Build->Select target'. 
+
+Lorsque vous êtes en version Debug, vous pouvez tracer instruction par instruction ce que que fait réellement votre programme. Pour cela, il suffit de définir des points d'arrêt par un clic droit dans la marge et en choisissant \og{}Add breakpoint\fg{} : un point rouge apparait indiquant la présence d'un point d'arrêt. Vous pouvez ajouter autant de point d'arrêt que vous le souhaitez. 
+
+Pour exécuter votre programme en mode Debug, vous devez utiliser le menu \verb-Debug-, les raccourcis claviers (recommandé) ou la barre d'outils.
+Les commandes disponibles sont :
+\begin{itemize}
+  \item \verb-Start/Continue- : Débute l'exécution en mode Debug ou continue l'exécution du programme jusqu'au prochain point d'arrêt.
+  \item \verb-Stop debugger- : Arrête l'exécution du programme et du débugger
+  \item \verb-Run to cursor- : Débute l'exécution en mode Debug ou continue l'exécution du programme jusqu'à ce que la ligne courante dans l'éditeur de code soit atteinte
+  \item \verb-Next line- : Exécute la ligne d'instuction suivante
+  \item \verb-Step into- : Entre dans la fonction et attend d'autres ordres
+  \item \verb-Step out- : Continue l'exécution de la fonction jusqu'à ce qu'elle se termine
+  \item \verb-Debugging windows- : Permet d'afficher des fenêtres d'information spéciales (ex: la pile d'appel, les valeurs des variables\ldots)
+\begin{tipsandhints}
+Assurez vous d'avoir en permanence les fenêtres d'information \verb-Call stack- et \verb-Watches- ouvertes lors du déboggage de vos programmes. Dans la fenetre \verb-Watches- vous pouvez ajouter des expressions supplémentaires qui seront calculées par le debugger (ex: \verb-tab[10][i+2]-, \verb-*record-, \verb'record->attribute').
+\end{tipsandhints}
+\end{itemize}
+
+\begin{commonerrors}
+N'utilisez pas les commandes \verb-New instruction- et \verb-Step into instuction- car vous vous retrouverez dans le code assembleur du programme. 
+\end{commonerrors}
+
+
+
+\begin{center} 
+\begin{tabu}{X[c,m]X[c,m]}
+\pgfimage[height=8cm]{vm/vmdebug4}&
+\pgfimage[width=6cm]{vm/vmdebug0}
+\end{tabu}
+\end{center}
+
+
+\chapter{TP1.2 - Un peu de pratique pour s'exercer}
+    
+A la fin de ce TP, vous devrez avoir effectué les actions suivantes sur votre programme :
+\begin{enumerate}
+  \item Avoir créé un programme du type \og{}Console Application\fg{}
+  \item Avoir configuré votre projet tel que :
+    \begin{itemize}
+      \item En mode Débug et Release : les options de compilation suivantes soient activées :
+      \ccode{--std=c89}, \ccode{-Wall} et
+      \ccode{-Wstrict-prototypes}
+      \item Définir le symbole \ccode{NDEBUG} pour le mode Release. Vérifier la prise en compte correcte de ce symbole en ajoutant une assertion toujours fausse dans votre programme\footnote{La fonction \texttt{assert(cond)} de \texttt{assert.h} est desactivée grâce au symbole préprocesseur \texttt{NDEBUG}.}. Exécuter votre programme en mode Debug et en mode Release. Que constate-t-on ?
+    \end{itemize}
+  \item Avoir déboggé votre programme et avoir effectué un pas à pas, une inspection des variables et de la pile d'appel.
+\end{enumerate}
+
+
+
+\section{Le tri à bulles}
+
+La méthode du tri à bulles est une méthode basique de tri. Si $N$ désigne le
+nombre d'éléments à trier, sa complexité est en $O(N^2)$, ce qui classe cette
+méthode parmi les moins performantes.
+
+\subsection{Principes}
+
+Soit $N$ valeurs scalaires (entières ou réelles) à trier par valeur croissante.
+Ces $N$ valeurs forment une liste. Le principe de tri consiste à parcourir la
+liste et à comparer deux éléments successifs au sein de la liste. Les deux
+éléments adjacents sont permutés lorsque l'ordre croissant des valeurs n'est pas
+respecté. Ainsi, les éléments de plus faible valeur remontent en début de liste.
+Si lors d'un parcours de la liste, aucune permutation n'est réalisée, cela
+signifie que la liste est totalement triée.
+
+\subsection{Exemple}
+ 
+
+Soit la liste d'entiers $(6, 2, 5, 3, 9)$ que l'on souhaite trier par valeur
+croissante. Les différentes étapes de la méthode sont décrites ci-dessous :
+
+\begin{description}
+\item[Etape 1]
+$$(\mathbf{6}, \mathbf{2}, 5, 3, 9) \to (2, 6, 5, 3, 9)$$
+$$(2, \mathbf{6}, \mathbf{5}, 3, 9) \to (2, 5, 6, 3, 9)$$
+$$(2, 5, \mathbf{6}, \mathbf{3}, 9) \to (2, 5, 3, 6, 9)$$
+$$(2, 5, 3, \mathbf{6}, \mathbf{9}) \to (2, 5, 3, 6, 9)$$
+Commentaire : les deux derniers éléments de la liste sont triés.
+\item[Etape 2]
+$$(\mathbf{2}, \mathbf{5}, 3, 6, 9) \to (2, 5, 3, 6, 9)$$
+$$(2, \mathbf{5}, \mathbf{3}, 6, 9) \to (2, 3, 5, 6, 9)$$
+$$(2, 3, \mathbf{5}, \mathbf{6}, 9) \to (2, 3, 5, 6, 9)$$
+\item[Etape 3]
+$$(\mathbf{2}, \mathbf{3}, 5, 6, 9) \to (2, 3, 5, 6, 9)$$
+$$(2, \mathbf{3}, \mathbf{5}, 6, 9) \to (2, 3, 5, 6, 9)$$
+Commentaire : aucune permutation ; fin du tri.
+\end{description}
+
+\subsection{Algorithme}
+
+On suppose que la liste de nombres à trier est représentée sous la forme d'un
+tableau de $MAX$ entiers. La valeur de $MAX$ est connue \textit{a priori}. La
+méthode de tri est implémentée sous la forme de la fonction
+\ccode{tri_bulle}.
+ 
+
+\begin{algorithm}[H]
+    \SetKwInOut{Input}{Entr\'ee}
+    \SetKwInOut{Output}{Sortie}
+    \SetKwInOut{InputCond}{Précondition}
+    \SetKwInOut{OutputCond}{Postcondition}
+    \SetKwInOut{LocalVar}{Variable locale}
+    \SetKw{KwAnd}{et}
+    \SetKwBlock{debut}{Début}{fin}
+    \SetAlgoVlined
+    
+\Input{tab : le tableau de nombres\\
+       MAX : type entier \tcc*{nombre d'elements du tableau}}
+\InputCond{MAX $\geq$ 0}
+\Output{rien}
+\OutputCond{le tableau est trie en ordre croissant}
+\LocalVar{  i, j : type entier ; indice de parcours des elements du tableau.\\
+            tmp : type identique aux elements du tableau ; variable de stockage temporaire.\\
+            non\_trie : type booleen \tcc*{booleen permettant de savoir si le tableau\\ est trie ou non
+                              (non trie = vrai si le tableau n'est pas trie).}}
+
+\BlankLine
+\debut{
+  non\_trie $\gets$ Vrai \tcc*[l]{le tableau n'est pas trie}
+  i $\gets$ 0\;
+  \While{i $\leq$ MAX-1 \KwAnd non\_trie est Vrai}{
+    non\_trie $\gets$ Faux\;
+    \For{ j = 1 \KwTo i = MAX-i}{
+      \If{tab[j] < tab[j-1]}{
+        tmp $\gets$ tab[j-1]\;
+        tab[j-1] $\gets$ tab[j]\;
+        tab[j] $\gets$ tmp\;
+        non\_trie $\gets$ Vrai\;
+      }
+    }
+  }
+}
+
+\end{algorithm}
+
+
+\subsection{Mise en oeuvre : Version 1}
+
+Dans une première version, le tableau à trier sera considéré sous la forme d'une
+variable globale et les éléments du tableau seront de type entier. Pour réaliser
+cette mise en oeuvre, vous devez créer un projet et le configurer comme indiqué plus haut. Vous devez réaliser vos tests d'exécutions en mode Débug et en
+mode Release.
+
+\subsubsection{Création d'un tableau de MAX entiers et affectation des éléments}
+
+Ecrire la fonction \ccode{init_tab} qui permet d'affecter aux éléments du
+tableau \ccode{tab_int} une valeur entière pseudo aléatoire\footnote{Cf. chapitre du support de cours}.
+
+\subsubsection{Affichage de la valeur des éléments du tableau \ccode{tab_int}}
+
+Ecrire la fonction \ccode{affiche_contenu_tab_int} qui permet d'afficher à
+l'écran le contenu de chaque élément du tableau. L'affichage doit être formaté
+selon l'exemple ci-dessous :
+\begin{csource}
+    ....
+    Tab_int[2] = 25
+    Tab_int[3] = 12
+    ....
+\end{csource}
+
+\subsubsection{Ecriture de la fonction \ccode{main}}
+
+Ecrire la fonction \ccode{main} qui contiendra les appels aux 2 fonctions
+précédentes. Vérifier que le comportement de votre programme est celui attendu.
+
+\subsubsection{Fonction \ccode{tri_bulle}}
+
+Ecrire le code de la fonction \ccode{tri_bulle}. Insérer l'appel de cette
+fonction dans la fonction \ccode{main}. Vérifier que le tableau est bien trié
+par valeur croissante.
+
+\begin{commonerrors}
+Vous constaterez que le programme ne tri pas correctement les nombres du tableaux. Détectez et corrigez l'(es) erreur(s) en utilisant le débuggage pour tracer pas à pas ce que fait votre programme.
+\end{commonerrors}
+
+\subsection{Mise en oeuvre : Version 2}
+
+Modifiez la version 1 de manière à ne plus utiliser de variables globales.
+    
+ 
+\chapter{TP1.3 - Récupération du projet}
+
+Dans le répertoire \verb|~/Desktop/vbox-U/|, créer un répertoire spécifique pour le projet tel que par exemple \verb'ProjetC-JeanNoelDeLaMottePicquet'.
+Ce nom de répertoire ne doit contenir que des lettres non accentuées et/ou des chiffres.
+  
+Dans une console, vous pouvez utiliser les commandes suivantes :
+\begin{bashsource}
+cd ~/Desktop/vbox-U
+mkdir ProjetC-JeanNoelDeLaMottePicquet
+\end{bashsource}
+    
+Placez vous dans le répertoire ainsi créé :
+\begin{bashsource}
+cd ProjetC-JeanNoelDeLaMottePicquet
+\end{bashsource}
+ou
+\begin{bashsource}
+cd ~/Desktop/vbox-U/ProjetC-JeanNoelDeLaMottePicquet
+\end{bashsource}
+
+Récupérez le projet et sa documentation en saisissant la commande suivante (en étant situé dans le répertoire) :
+\begin{bashsource}
+wget -q -O - http://deposit.projectsforge.org/update/c/update.sh | bash
+\end{bashsource}
+Cette commande télécharge un script et l'exécute. Ce script télécharge à son tour l'ensemble des fichiers dont vous avez besoin.
+
+\begin{tipsandhints}
+En cas de mise à jours du code source par l'enseignant, il vous suffit de saisir
+la commande précédente à nouveau ou la commande suivante pour en bénéficier :
+\begin{bashsource}
+./update.sh   
+\end{bashsource}
+L'ensemble des fichiers que vous ne devez pas modifier seront à nouveaux téléchargés et écrasés.
+\end{tipsandhints}
+
+\begin{warning}
+A chaque éxécution du script, une copie de sauvegarde de vos fichiers sera faite avec la création d'un répertoire parallèle daté (ex: \verb'~/Desktop/vbox-U/ProjetC-JeanNoelDeLaMottePicquet-2013-09-06#09:54:21').
+\end{warning}
+
+L'ensemble des fichiers téléchargés s'organise de la façon suivante :
+\begin{itemize}
+  \item \verb-doc-contient la documentation Doxygen du projet. Elle peut être consultée avec un navigateur web tel que chromium en ouvrant le fichier \verb-doc/index.html-.
+  \item \verb-subject- contient cette documentation
+  \item \verb-courses- contient le cours au format PDF imprimable
+  \item \verb-moniteur- contient les coordonnées des moniteurs
+  \item \verb-include- contient les fichiers d'entête (\verb-*.h-) du projet
+  \item \verb-src- contient les fichiers de code source (\verb-*.c-) du projet
+  \item \verb-make- contient des scripts pour la gestion du projet
+  \item \verb-printformat- contient les formats modèles d'impression pour le dernier chapitre
+  \item \verb-provided- contient le code objet des fonctions déjà implémentées (fonctions \verb-provided_*-) sous la forme de bibliothèques dynamiques.
+  \item \verb-Makefile- contient le script Makefile permettant de construire le projet
+  \item \verb-project.cbp- est le fichier projet \verb-Code::Blocks-
+  \item \verb-update.sh- est le script de mise à jours utilisé précédemment.
+\end{itemize}
+
+Le programme que vous allez développer existe en deux versions : une version Debug et une version Release. Dans la version Debug, les temps d'éxécution sont plus long mais vous pouvez effectuer du déboggage de code. A l'opposé, la version Release est plus rapide mais elle ne permet pas de faire du deboggage. Le choix de l'une ou l'autre des versions s'effectue sous \verb-Code::blocks- en choisissant le \verb-Build target- dans la barre d'outil ou via le menu \verb'Build->Select target'. Ce chois peut aussi être effectué en ligne de commande via la commande \verb-make- décrite ci-après.
+
+\begin{center}
+\pgfimage[height=8cm]{vm/vmbuildtarget}
+\end{center}
+
+Dans la console, un certain nombre de commandes sont disponibles :
+\begin{itemize}
+    \item \verb'make' :Identique à \verb'make all' ou à \verb'make debug/facturation release/facturation'. Construit les deux versions du programme
+    \item \verb'make debug/facturation' : Construit la version Debug du programme.
+    \item \verb'make release/facturation' : Construit la version Release du programme.
+    \item \verb'make clean' : Supprime tous les fichiers de code objet et les exécutables.
+    \item \verb'make valgrind-debug' : Exécute la version Debug du programme avec Valgrind.
+    \item \verb'make valgrind-release' : Exécute la version Release du programme avec Valgrind.
+    \item \verb'make valgrind-debug-nogui' : Exécute la version Debug du programme avec Valgrind. L'interface graphique n'est pas exécutée.
+    \item \verb'make valgrind-release-nogui' : Exécute la version Release du programme avec Valgrind. L'interface graphique n'est pas exécutée.
+    \item \verb'VALGRIND="option1 options2" make valgrind-debug' : Exécute la version Debug du programme avec Valgrind et transmet les \verb-options1- et \verb-option2- en paramètre au programme.
+    \item \verb'VALGRIND="option1 options2" make valgrind-debug | less' : Exécute la version Debug du programme avec Valgrind et transmet les \verb-options1- et \verb-option2- en paramètre au programme. Le texte affiché est envoyé au programme \verb-less- qui effectue alors l'affichage écran par écran. Cette commande vous sera utile si l'affichage est trop important.
+\end{itemize}
+
+\section{Options d'exécution du programme}
+
+Lors de l'exécution de votre programme, vous pouvez indiquer des paramètres supplémentaires changeant le comportement par défaut du programme. 
+\begin{tipsandhints}
+Sous \verb-Code::Blocks-, vous les précisez via le menu \verb~Project->Set programs' arguments~.
+\end{tipsandhints}
+
+\begin{tipsandhints}
+Dans la console, vous les précisez après le nom du programme.
+\begin{bashsource}
+debug/facturation option1 option2
+release/facturation option1 option2
+\end{bashsource}
+\end{tipsandhints}
+
+\begin{tipsandhints}
+Dans le cas des tests valgrind, vous les précisez via la variable VALGRIND.
+\begin{bashsource}
+VALGRIND="option1 option2" make valgrind-debug
+\end{bashsource}
+\end{tipsandhints}
+
+
+Les principales options utiles sont : 
+
+\noindent\begin{tabu*}{|X[1]|X[2]|}
+\hline
+\verb'verbose-unittests'&Par défaut, les tests unitaires sont tous exécutés et l'affichage est compacte. En utilisant ce paramètre, vous demandé l'affichage de chaque fonction des tests unitaires.\\\hline
+\verb'disable-unit-MyString'&Desactive l'exécution de l'ensemble des tests unitaires associés au module \verb-MyString-. Il existe un paramètre similaire pour chacun des modules de tests unitaires. La liste s'affiche par défaut lors de l'exécution du programme.\\\hline
+\verb'disable-unit-test_toLowerChar'&Desactive l'exécution de la fonction \verb-test_toLowerChar- du test unitaire \verb-MyString-. Il existe un paramètre similaire pour chacune des fonctions composant un test unitaire. La liste peut être obtenue lorsque \verb'verbose-unittests' est spécifié.\\\hline
+\verb'silent-tests'&Desactive l'affichage de la progression des tests unitaires\\\hline
+\verb'reduce-dump-usage'&Par défaut, la liste des fonctions non implémentées est affichée à la fin du programme. Ce paramètre permet de desactiver cet affichage.\\\hline
+\verb'disable-dump-usage'&Par défaut, la liste des fonctions non implémentées et la liste des modules ayant encore des fonctions non implementées sont affichés à la fin du programme. Cette option permet de desactiver ces deux affichages.\\\hline
+\verb'disable-gui'&Desactive l'interface graphique. Seule les tests unitaires sont exécutés.\\\hline
+\end{tabu*}
+ 
+\section{Evaluation du projet}
+
+Pour l'évaluation du projet, les critères suivants (liste non exhaustive) sont pris en compte :
+\begin{itemize}
+  \item Votre programme compile en mode Débug \textbf{et} en mode Release.
+  \item Les fonctions sont implémentés.
+  \item Les fonctions s'exécutent sans erreurs.
+  \item Votre programme s'exécute en mode Debug sans aucune erreur jusqu'au bout.
+  \item Votre programme s'exécute en mode Release sans aucune erreur jusqu'au bout.
+  \item Votre programme s'exécute avec Valgrind sans avertissement Valgrind sur votre code.
+  \item Vous respectez des conventions de nommage et de mise en forme du code tout au long de votre projet.
+  \item Votre code est \og{}propre\fg{}, facilement lisibles et commenté si nécessaire.
+  \item Vous avez suivi toutes les séances de TDs et de TPs.
+\end{itemize}
+
+
+\chapter{TP1.4 - Organisation générale du projet}
+
+\section{Objectifs du projet}
+
+Dans le cadre des TDs/TPs de langage C, nous vous proposons d'utiliser un programme
+complet et fonctionnel comme base de travail. Au fur et à mesure des séances,
+vous allez devoir remplacer des portions de code par les votres. Cette approche
+vous permet :
+\begin{itemize}
+  \item d'avoir une vue globale de l'application;
+  \item de prendre conscience qu'un programme est constitué de \og petits\fg
+  codes et qu'il suffit souvent de les traiter les uns après les autres;
+  \item de comprendre ce qu'est un test unitaire (Le projet intègre une version
+  simplifiée de tests unitaires);
+  \item de voir comment une approche modulaire permet de séparer facilement le
+  développement et la mise au point du code;
+  \item de lire et comprendre du code existant;
+  \item d'entrevoir concrêtement la mise en oeuvre d'une application GTK+.
+\end{itemize}
+
+Le projet proposé est une gestion de produits/devis/factures. Le projet n'est
+bien sûr pas complet et évite volontairement la mise en oeuvre de bases de
+données ou la mise en oeuvre d'un vrai système de tests unitaires tels que
+CUnit.
+
+\section{Les concepts}
+
+\begin{itemize}
+  \item Opérateur: individu authentifié pouvant manipuler l'application
+  \item Produit: élément vendu par l'entreprise
+  \item Catalogue des produits: ensemble des produits vendus par l'entreprise
+  \item Fichier client : ensemble des clients répertoriés de l'entreprise
+  \item Document : devis ou facture crée par l'entreprise
+  \item Devis : évaluation des montants associés à un certain nombre de produits
+  \item Facture: montants à payer par le client pour un certain nombre de
+  produits
+\end{itemize}
+
+\section{Les modules}
+
+Le projet est structuré en différents modules (ou unités fonctionnelles). 
+\begin{warning}
+Chaque fois que vous remplacerez une fonction celle-ci sera utilisée par votre code mais également par le code déjà implémenté. 
+\end{warning}
+
+
+ 
+
+
+{\tabulinesep=1.2mm
+\begin{tabu*}[c]{|X[c,1]|X[2]|X[c,1.1]|}
+\hline\rowfont[c]\bfseries
+Fichiers&Role&Tests unitaires\\\hline\hline
+\ccode{MyString.h}, \ccode{MyString.c}&
+\textbf{Manipulation de chaînes de caractères :}
+
+  \begin{itemize}
+  \item Remplacement des fonctions standards de manipulation de chaînes de
+  caractères
+  \item Ajout de fonctions de manipulation de chaînes de caractères
+  \end{itemize}&
+   \ccode{MyStringUnit.h}, \ccode{MyStringUnit.c}\\\hline
+
+\ccode{OperatorTable.h}, \ccode{OperatorTable.c}&
+\textbf{Gestion des opérateurs :}
+      \begin{itemize}
+        \item chargement et sauvegarde de la liste des opérateurs et de
+      leurs mots de passe
+      \item ajout, suppression et modification d'un opérateur
+    \end{itemize}&
+\ccode{OperatorTableUnit.h}, \ccode{OperatorTableUnit.c}\\\hline
+\ccode{EncryptDecrypt.h}, \ccode{EncryptDecrypt.c}&
+\textbf{Cryptage et décryptage du fichier des opérateurs :}
+
+      \begin{itemize}
+          \item cryptage et décryptage en fonction d'une clé de cryptage
+      \end{itemize}
+&\ccode{EncryptDecryptUnit.h}, \ccode{EncryptDecrypt.c}\\\hline
+\ccode{CatalogRecord.h}, \ccode{CatalogRecord.c}, \ccode{CatalogDB.h}, \ccode{CatalogDB.c},
+    \ccode{GtkCatalogModel.h}, \ccode{GtkCatalogModel.c}, \ccode{Catalog.h}, \ccode{Catalog.c}&
+\textbf{Gestion du catalogue des produits :}
+      \begin{itemize}
+      \item Manipulation et édition d'un produit
+      \item Manipulation du catalogue des produits
+    \end{itemize}
+&\ccode{CatalogRecordUnit.h}, \ccode{CatalogRecordUnit.c},
+    \ccode{CatalogDBUnit.h}, \ccode{CatalogDBUnit.c}\\\hline
+\ccode{CustomerRecord.h}, \ccode{CustomerRecord.c}, \ccode{CustomerDB.h},
+    \ccode{CustomerDB.c}, \ccode{GtkCustomerModel.h}, \ccode{GtkCustomerModel.c}, \ccode{Customer.h},
+    \ccode{Customer.c}&
+\textbf{Gestion du fichier client :}
+      \begin{itemize}
+      \item Manipulation et édition d'un client
+      \item Manipulation du fichier client
+    \end{itemize}
+&\ccode{CustomerRecordUnit.h}, \ccode{CustomerRecordUnit.c},
+    \ccode{CustomerDBUnit.h}, \ccode{CustomerDBUnit.c}\\\hline
+\ccode{DocumentUtil.h}, \ccode{DocumentUtil.c}&    
+\textbf{Fonctions utilitaires pour la manipulation de documents :}
+      \begin{itemize}
+      \item Calcule du numéro de document
+      \item Formattage de la date
+      \item Lecture et écriture de chaînes de caractères de taille variable dans
+      un fichier binaire
+    \end{itemize}
+&\ccode{DocumentUtilUnit.h}, \ccode{DocumentUtilUnit.c}\\\hline
+  
+\ccode{DocumentRowList.h}, \ccode{DocumentRowList.c}, \ccode{Document.h},
+    \ccode{Document.c}, \ccode{Quotation.h}, \ccode{Bill.h}, \ccode{Quotation.c}, 
+    \ccode{Bill.c}, \ccode{DocumentEditor.h}, \ccode{DocumentEditor.c}&
+\textbf{Gestion des documents :}
+      \begin{itemize}
+      \item Manipulation d'un devis ou d'une facture
+      \item Manipulation du contenu d'un document
+      \item Edition et visualisation du contenu d'un document
+    \end{itemize}
+&\ccode{DocumentRowListUnit.h}, \ccode{DocumentRowListUnit.c},
+    \ccode{DocumentUnit.h}, \ccode{DocumentUnit.c}\\\hline
+\ccode{Print.h}, \ccode{Print.c}, \ccode{PrintFormat.h}, \ccode{PrintFormat.c},
+    \ccode{Dictionary.h}, \ccode{Dictionary.c}&    
+\textbf{Gestion d'aperçu avant impression et formattage de la mise en forme d'un
+  document :}
+      \begin{itemize}
+      \item Visualisation de l'aperçu
+      \item Chargement d'un modèle de format
+      \item Formattage d'un document selon un modèle
+    \end{itemize}
+&\ccode{DictionaryUnit.h}, \ccode{DictionaryUnit.c}, \ccode{PrintFormat.h},
+    \ccode{PrintFormat.c}\\\hline
+\ccode{main.c}, \ccode{App.h}, \ccode{App.c}, \ccode{Config.h},\ccode{MainWindow.h}, \ccode{MainWindow.c}, \ccode{Registry.h},\ccode{UnitTest.h}&
+\textbf{Gestion de l'application, de la configuration et des tests unitaires}&\\\hline
+\end{tabu*}}
+
+Les dépendences entre les modules sont données par le schéma suivant :
+
+\begin{center} 
+\pgfimage[height=8cm]{dependencies}
+\end{center}  
+
+\section{Le projet est fonctionnel : qu'est-ce que j'ai à faire ?}
+
+Chaque module possèdant des fonctions à réécrire est associé à un autre module
+fourni sans le code source implémentant de façon correcte une solution.
+L'application est donc parfaitement fonctionnelle. Les fonctions fournies à
+réécrire commencent toutes par le préfix \ccode{provided_} et sont
+appellées dans les fonctions correspondantes sans préfix.
+
+Lorsque vous réécrivez une fonction, votre implémentation est utilisée dans
+votre programme mais aussi lorsque les fonctions fournies utilisent aussi la
+fonction (ex: votre fonction \ccode{stringLength} sera utilisée par toutes
+les fonctions \ccode{provided_*} nécessitant \ccode{stringLength}).
+
+Pour permettre ce mécanisme, des macros ont été utilisées. Pour la fonction \ccode{stringLength}, la déclaration du fichier \ccode{MyString.h} se présente ainsi :
+\begin{csource}
+OVERRIDABLE_PREFIX size_t OVERRIDABLE(stringLength)(const char * str);
+\end{csource}
+Vous pouvez considérer que les macros n'ont aucun effet et que donc cela correspond à la déclaration :
+\begin{csource}
+size_t stringLength(const char * str);
+\end{csource}
+Dans le fichier \ccode{MyString.h}, l'implémentation se présente sous la forme :
+\begin{csource}
+size_t IMPLEMENT(stringLength)(const char * str) {
+    return provided_stringLength(str);
+}
+\end{csource}
+La macro \ccode{IMPLEMENT} est utile au mécanisme de remplacement mais vous pouvez considérer ce code comme équivalent à
+\begin{csource}
+size_t stringLength(const char * str) {
+    return provided_stringLength(str);
+}
+\end{csource}
+Par conséquence, à chaque fois que la fonction \ccode{stringLength} est appellée, c'est cette fonction qui est appelée. A son tour, elle appelle la fonction \ccode{provided_stringLength}.
+
+\begin{warning}
+Le projet est configuré de manière à imposer un respect strict de la norme C89
+et des bonnes pratiques en C. Ainsi, tout avertissement sur des pratiques
+dangereuses est considéré comme une erreur de compilation. Vous devez vous assurer de ne rien
+laisser au hasard y compris les conversions. En mode strict, les commentaires courts \ccode{//} sont interdits.
+\end{warning}
+
+A chaque exécution de l'application, le programme commence par exécuter
+l'ensemble des tests unitaires sur les fonctions du programme. En cas d'erreur
+d'implémentation, le programme est arrêté. Si le programme est exécuté avec un
+debugger, le débugger est arrêté au lieu de terminer le programme afin de vous
+permettre d'inspecter l'état du programme ayant conduit à une erreur.
+
+\begin{tipsandhints}
+Le code fourni définit une fonction nommée \ccode{fatalError}.
+\begin{csource}
+void fatalError(const char * message);
+\end{csource}
+Cette fonction a pour particularité d'afficher un message et de termine le programme avec le code d'erreur 1. Elle est donc équivalente au code suivant lorsque \ccode{line} et \ccode{file} contiennent la ligne et le nom du fichier source où s'est produit l'erreur. 
+\begin{csource}
+fprintf(stderr, "Fatal error: \"%s\" at line %ld in source file %s\n", message, line, file);
+exit(1);
+\end{csource}
+Cependant, en mode Debug, cette fonction  a la particularité de \textbf{stopper le debugger avant de quitter le programme}. Cela vous permet donc d'effectuer un deboggage plus facilement et notamment de chercher la cause de cette erreur.
+\end{tipsandhints}
+
+\begin{warning}
+La réussite des tests unitaires est une étape nécessaire de validation de votre
+implémentation mais elle ne garantit pas que votre code est correct : il semble juste
+correct par rapport à ce qui a été testé.
+\end{warning}
+
+Pour tester votre implémentation, il est fortement recommandé d'utiliser au fur
+et à mesure le programme \ccode{valgrind} sur votre programme en version Debug.
+Les commandes permettant de la faire vous ont été données précédemment.
+
+\section{Convention de nommage et documentation Doxygen}
+
+L'ensemble des fonctions du programme sont nommées selon l'organisation suivante
+en trois partie :
+\begin{itemize}
+  \item Un prefix (optionnel) : jouant un rôle de qualificateur tels que
+  \ccode{provided} pour les fonctions fournies  ou \ccode{test} pour
+  les tests unitaires.
+  \item Un nom de module ou de structure de données (optionel) : chaque mot
+  commence par une majuscule tels que \ccode{MainWindow} ou \ccode{CatalogRecord}.
+  \item Un nom de fonction : chaque mot commence par une majuscule sauf le
+  premier mot qui est en minuscule tels que \ccode{removeRecord}.
+\end{itemize}
+
+Les trois parties du nom sont séparées par des \ccode{_}. On a par exemple
+\ccode{provided_CustomerRecord_read}.
+
+L'ensemble des fonctions du programme sont documentées à l'aide de commentaires
+Doxygen. La documentation obtenue se trouve dans le répertoire \ccode{doc}. Il vous est très fortement recommandé de la parcourir intégralement dès le début pour mieux comprendre l'organisation du projet.
+
+\section{Structuration des fichiers d'entêtes}
+
+Les fichiers d'entêtes sont structurés selon différents paquets :
+\begin{itemize}
+  \item \ccode{provided/*.h} : ces fichiers déclares les prototypes des
+  fonctions pré-implémentées;
+  \item \ccode{user/*.h} : à usage interne;
+  \item \ccode{*.h} : les fichiers d'entête de l'application. En générale
+  ils incluent les fichiers d'entête définissant les structures de données et
+  définissent les prototypes des fonctions de l'application (y compris celles
+  que vous allez implémenter).
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 

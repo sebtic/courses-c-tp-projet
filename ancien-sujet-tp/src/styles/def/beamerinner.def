@@ -1,0 +1,215 @@
+\mode<presentation>
+
+\setbeamercolor*{part part title}{use=structure,fg=white,bg=structure.fg!75}
+\setbeamercolor*{part part subtitle}{use=structure,fg=white,bg=structure.fg!50}
+%\setbeamercolor*{date}{use=structure,fg=white,bg=structure.fg!75}
+
+
+
+
+%\setbeamertemplate{blocks}[rounded][shadow=false]
+\setbeamertemplate{items}[ball]
+%\setbeamertemplate{sections/subsections in toc}[ball]
+
+\setbeamertemplate{part page}[default][colsep=-4bp,rounded=false,shadow=true]
+
+ 
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{section in toc}[ball unnumbered]
+ 
+
+\newsavebox{\marel@boxes@box}
+
+\define@key{marvelboxes}{upper}{\def\marvel@boxes@upper{#1}}
+\define@key{marvelboxes}{lower}{\def\marvel@boxes@lower{#1}}
+% only fg is used
+\define@key{marvelboxes}{upperborder}{\def\marvel@boxes@upperborder{#1}}
+% only fg is used
+\define@key{marvelboxes}{lowerborder}{\def\marvel@boxes@lowerborder{#1}}
+% fg is border, bg is fill
+\define@key{marvelboxes}{uppershadow}{\def\marvel@boxes@uppershadow{#1}}
+% fg is border, bg is fill
+\define@key{marvelboxes}{lowershadow}{\def\marvel@boxes@lowershadow{#1}}
+\define@key{marvelboxes}{width}{\edef\marvel@boxes@width{#1}}
+
+\newlength{\marvel@boxes@height}
+
+\newsavebox\marvel@boxes@shadowcolorbox
+\newsavebox\marvel@boxes@colorbox
+
+% #1 title
+% #2 parameters
+\newenvironment{marvelboxes}[2]{%
+    \global\let\beamer@firstlineitemizeunskip=\relax%
+    \vbox\bgroup%        
+            % set defaults
+            \setkeys{marvelboxes}{  upper=marvelboxes upper,%
+                                    lower=marvelboxes lower,%
+                                    upperborder=marvelboxes upper border,%
+                                    lowerborder=marvelboxes lower border,%
+                                    uppershadow=marvelboxes upper shadow,%
+                                    lowershadow=marvelboxes lower shadow,%
+                                    width=\textwidth}%
+            % override defaults with given parameters                               
+            \setkeys{marvelboxes}{#1}%
+            % get effective paremeters
+            {%
+                \usebeamercolor{\marvel@boxes@upper}%
+                \globalcolorstrue%
+                \colorlet{upper.fg}{fg}%
+                \colorlet{upper.bg}{bg}%
+            }%
+            {%
+                \usebeamercolor{\marvel@boxes@lower}%
+                \globalcolorstrue%
+                \colorlet{lower.fg}{fg}%
+                \colorlet{lower.bg}{bg}%
+            }%
+            {%
+                \usebeamercolor{\marvel@boxes@upperborder}%
+                \globalcolorstrue%
+                \colorlet{upperborder.fg}{fg}%
+                \colorlet{upperborder.bg}{bg}%
+            }%
+            {%
+                \usebeamercolor{\marvel@boxes@lowerborder}%
+                \globalcolorstrue%
+                \colorlet{lowerborder.fg}{fg}%
+                \colorlet{lowerborder.bg}{bg}%
+            }%
+            {%
+                \usebeamercolor{\marvel@boxes@lowershadow}%
+                \globalcolorstrue%
+                \colorlet{lowershadow.fg}{fg}%
+                \colorlet{lowershadow.bg}{bg}%
+            }%
+            {%
+                \usebeamercolor{\marvel@boxes@uppershadow}%
+                \globalcolorstrue%
+                \colorlet{uppershadow.fg}{fg}%
+                \colorlet{uppershadow.bg}{bg}%
+            }%                
+        \vskip4bp%
+        \ifblank{#2}{}{
+            % render upper in a box
+            \sbox{\marel@boxes@box}{%
+                \hspace{4bp}\begin{minipage}[b]{\marvel@boxes@width-8bp}%
+                    \vspace{4bp}%
+                    \usebeamercolor[fg]{\marvel@boxes@upper}%
+                    #2%
+                    \vspace{4bp}%
+                \end{minipage}%
+            }%
+            \settoheight{\marvel@boxes@height}{\usebox{\marel@boxes@box}}%
+            \hbox{%
+                \begin{pgfpicture}{0bp}{+-\marvel@boxes@height}{0bp}{+-\marvel@boxes@height}%
+                  % shadow
+                  \color{uppershadow.bg}%
+                  \pgfsetstrokecolor{uppershadow.fg}
+                  \pgfpathqmoveto{2bp}{-2bp}%
+                  \pgfpathlineto{\pgfpoint{\marvel@boxes@width+2bp}{-2bp}}%
+                  \pgfpathlineto{\pgfpoint{\marvel@boxes@width+2bp}{-\marvel@boxes@height-2bp}}%
+                  \pgfpathlineto{\pgfpoint{2bp}{-\marvel@boxes@height-2bp}}%
+                  \pgfpathclose%
+                  \pgfusepath{fill}%
+%                   \pgfpathqmoveto{2bp}{-\marvel@boxes@height-2bp}%
+%                   \pgfpathlineto{\pgfpoint{2bp}{-2bp}}%
+%                   \pgfpathlineto{\pgfpoint{\marvel@boxes@width+2bp}{-2bp}}%
+%                   \pgfpathlineto{\pgfpoint{\marvel@boxes@width+2bp}{-\marvel@boxes@height-2bp}}%                  
+%                   \pgfusepath{stroke}%
+                  % front
+                  \color{upper.bg}
+                  \pgfsetstrokecolor{upperborder.fg}
+                  \pgfpathqmoveto{0bp}{0bp}%
+                  \pgfpathlineto{\pgfpoint{\marvel@boxes@width}{0bp}}%
+                  \pgfpathlineto{\pgfpoint{\marvel@boxes@width}{-\marvel@boxes@height}}%
+                  \pgfpathlineto{\pgfpoint{0bp}{-\marvel@boxes@height}}%
+                  \pgfpathclose%
+                  \pgfusepath{fill}%
+                  \pgfpathqmoveto{0bp}{-\marvel@boxes@height}%
+                  \pgfpathlineto{\pgfpoint{0bp}{0bp}}%
+                  \pgfpathlineto{\pgfpoint{\marvel@boxes@width}{0bp}}%
+                  \pgfpathlineto{\pgfpoint{\marvel@boxes@width}{-\marvel@boxes@height}}%                  
+                  \pgfusepath{stroke}%
+                \end{pgfpicture}%
+                \usebox{\marel@boxes@box}%
+            }%            
+        }%
+        % save colors for the end part
+        \setbox\marvel@boxes@shadowcolorbox=\hbox{{\pgfpicturetrue\pgfsetcolor{lowershadow.bg}\pgfsetstrokecolor{lowershadow.fg}}}%
+        \setbox\marvel@boxes@colorbox=\hbox{{\pgfpicturetrue\pgfsetcolor{lower.bg}\pgfsetstrokecolor{lowerborder.fg}}}%
+        \begin{lrbox}{\marel@boxes@box}%
+            \hspace{4bp}\begin{minipage}[b]{\marvel@boxes@width-8bp}%
+                 \vspace{4bp}%
+                 \usebeamercolor[fg]{\marvel@boxes@lower}%
+                 \colorlet{beamerstructure}{upper.bg}%
+                 \colorlet{structure}{upper.bg}%
+}%
+{%
+                \vspace{4bp}%
+            \end{minipage}%
+        \end{lrbox}%        
+        \settoheight{\marvel@boxes@height}{\usebox{\marel@boxes@box}}%   
+        \vskip-2bp     
+        \hbox{%
+            \begin{pgfpicture}{0bp}{+-\marvel@boxes@height}{0bp}{+-\marvel@boxes@height}%
+              % shadow
+              %\color{lowershadow.bg}\pgfsetstrokecolor{lowershadow.fg}%
+              \unhbox\marvel@boxes@shadowcolorbox%              
+              \pgfpathqmoveto{2bp}{-2bp}%
+              \pgfpathlineto{\pgfpoint{\marvel@boxes@width+2bp}{-2bp}}%
+              \pgfpathlineto{\pgfpoint{\marvel@boxes@width+2bp}{-\marvel@boxes@height-2bp}}%
+              \pgfpathlineto{\pgfpoint{2bp}{-\marvel@boxes@height-2bp}}%
+              \pgfpathclose%              
+              \pgfusepath{fill}%              
+              %
+%               \pgfpathqmoveto{2bp}{-2bp}
+%               \pgfpathlineto{\pgfpoint{2bp}{-\marvel@boxes@height-2bp}}% 
+%               \pgfpathlineto{\pgfpoint{\marvel@boxes@width+2bp}{-\marvel@boxes@height-2bp}}%                 
+%               \pgfpathlineto{\pgfpoint{\marvel@boxes@width+2bp}{-2bp}}        
+%               \pgfusepath{stroke}%
+              %
+              % front
+              %\color{lower.bg}\pgfsetstrokecolor{lowerborder.fg}
+              \unhbox\marvel@boxes@colorbox%      
+              \pgfpathqmoveto{0bp}{0bp}%
+              \pgfpathlineto{\pgfpoint{\marvel@boxes@width}{0bp}}%
+              \pgfpathlineto{\pgfpoint{\marvel@boxes@width}{-\marvel@boxes@height}}%
+              \pgfpathlineto{\pgfpoint{0bp}{-\marvel@boxes@height}}%
+              \pgfpathclose%
+              \pgfusepath{fill}%
+              \pgfpathqmoveto{\marvel@boxes@width}{0bp}%
+              \pgfpathlineto{\pgfpoint{\marvel@boxes@width}{-\marvel@boxes@height}}%
+              \pgfpathlineto{\pgfpoint{0bp}{-\marvel@boxes@height}}%
+              \pgfpathlineto{\pgfpoint{0bp}{0bp}}
+              \pgfpathclose%
+              \pgfusepath{stroke}%
+            \end{pgfpicture}%
+            \usebox{\marel@boxes@box}%
+        }%     
+        \vskip2bp%
+    \egroup% of \vbox\bgroup
+}
+
+\defbeamertemplate{block begin}{marvel}[1][]
+{
+  \par%\vskip\medskipamount%
+  \begin{marvelboxes}{  upper=marvelboxes upper,%
+                        lower=marvelboxes lower,%
+                        upperborder=marvelboxes upper border,%
+                        lowerborder=marvelboxes lower border,%
+                        uppershadow=marvelboxes upper shadow,%
+                        lowershadow=marvelboxes lower shadow,%
+                        #1}{\raggedright\usebeamerfont*{marvelboxes title}\insertblocktitle}%
+    \raggedright%
+    \usebeamerfont{marvelboxes body}%
+}
+\defbeamertemplate{block end}{marvel}[1][]
+{\end{marvelboxes}%
+%\vskip\smallskipamount
+}
+ 
+\setbeamertemplate{blocks}[marvel]
+
+\mode<all>

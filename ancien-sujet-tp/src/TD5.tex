@@ -1,0 +1,369 @@
+\chapter{TD5 : conversion de nombres en chaînes de caractères}
+
+Cette série d'exercices devrait vous permettre de compléter par vous même les fonctions suivantes du fichier \ccode{DocumentUtil.c} :
+\begin{itemize}
+  \item \ccode{char * computeDocumentNumber(long id)} retourne une chaîne de caractère allouée sur le tas contenant la représentation en base 36 (0-9A-Z) du nombre paramètre;
+  \item \ccode{char * formatDate(int day, int month, int year)} retourne une chaîne de caractère allouée sur le tas contenant la représentation de la date au format JJ/MM/AAAA (donc en base 10).
+\end{itemize}
+
+\begin{csourcecorrection}
+char * computeDocumentNumber(long id) {
+    char buf[1024];
+    int pos = 0;
+    int len = 0;
+    long temp = id;
+    long val;
+
+    while (temp > 0) {
+        len++;
+        temp = temp / 36;
+    }
+
+    while (id > 0) {
+        val = id % 36;
+        if (val < 10)
+            buf[len - 1 - pos] = (char) ('0' + val);
+        else
+            buf[len - 1 - pos] = (char) ('A' + val - 10);
+        pos++;
+        id = id / 36;
+    }
+    buf[pos] = '\0';
+    return bridge_duplicateString(buf);
+}
+char * formatDate(int day, int month, int year) {
+    char buf[1024];
+
+    sprintf(buf, "%02d/%02d/%4d", day, month, year);
+    return duplicateString(buf);
+}
+\end{csourcecorrection}
+
+
+\section{Conversion base B vers décimale}
+
+Soit $n$ un entier positif ou nul qui s'exprime en base $B$ ($B\geq2$) sous la forme de $N$ chiffres $b_0$, \ldots, $b_{N-1}$ ($b_i\in\{0,1,2,\ldots,B-1\}$).
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+$b_{N-1}$&\ldots&$b_5$&$b_4$&$b_3$&$b_2$&$b_1$&$b_0$\\
+\hline
+\end{tabular}
+\end{center}
+
+On a :
+\begin{itemize}
+  \item $n=\sum_{i=0}^{N-1}b_iB^i$
+  \item Schéma de Horner : $$n=\sum\limits_{i=0}^{N-1}b_iB^i=b_0+B[b_1+B[b_2+\ldots+B[b_{N-2}+Bb_{N-1}]]]]$$
+  Exemple: 0101 => 1+2(0+2(1+2(0)))=4+1=5
+\end{itemize}
+
+\begin{warning}
+\noindent Vous ne devez jamais calculer $B^i$ dans le schéma de Horner.
+\end{warning}
+
+\begin{enumerate}
+  \item Écrire la fonction \ccode{BaseB2Dec} qui admet trois arguments (la base $B$, le nombre de chiffres $N$ du tableau, et un tableau de $N$ chiffres) et qui retourne l'entier long $n$ associé. On prendra soin de préciser la convention de représentation utilisée.
+
+\begin{correction}
+La convention de représentation retenue est la suivante :
+\begin{center}
+\begin{tabular}{|l|c|c|c|c|c|c|c|c|}
+\hline
+Indice du tableau C&N-1&\ldots&5&4&3&2&1&0\\
+\hline
+               &$b_{N-1}$&\ldots&$b_5$&$b_4$&$b_3$&$b_2$&$b_1$&$b_0$\\
+\hline
+\end{tabular}
+\end{center}
+Remarque : ce n'est pas la seule convention qui peut être retenue.
+\end{correction}
+\begin{csourcecorrection}
+#include <math.h>
+#include <stdio.h>
+
+long int BaseB2Dec( int B, int N, int b[] )
+{
+  long int n;
+  int i;
+
+  n = b[N-1];
+  for( i = N-2; i >= 0; --i)
+    n = n*B + b[i];
+  return n;
+}
+\end{csourcecorrection}
+  \item Écrire la fonction \ccode{Bin2Dec}, utilisant \ccode{BaseB2Dec}, qui retourne la valeur décimale signée correspondant à la représentation binaire sur 16 bits fournie en paramètre.
+  \begin{equation}
+n=\left\{\begin{array}{ll}
+      \sum\limits_{i=0}^{14}b_i*2^i&\mbox{ Si $n\geq 0$ (on a $b_{15}=0$)}\\
+      -2^{15}+\sum\limits_{i=0}^{14}b_i*2^i&\mbox{ Si $n<0$ (on a $b_{15}=1$)}
+      \end{array}\right.
+  \label{dec2bin}
+\end{equation}
+\begin{csourcecorrection}
+long int Bin2Dec( int b[] )
+{
+  long int n;
+
+  n = Base2Dec(2,15,b);
+  if (b[15] == 1)
+    n = (-1L<<15) + n;
+  return n;
+}
+\end{csourcecorrection}
+  \item Écrire la fonction \ccode{main}
+\begin{csourcecorrection}
+int main(void)
+{
+  long int n;
+  int b[16];
+  int i;
+
+  printf("Entrez les 16 bits du nombres :\n");
+  for( i = 15; i >= 0; --i)
+  {
+    printf("bits %d : ",i);
+    scanf("%d", &(b[i]));
+  }
+  n = Bin2Dec(b);
+  printf("\nLe nombre vaut %ld", n);
+  return 0;
+}
+\end{csourcecorrection}
+\end{enumerate}
+
+
+\section{Conversion décimale vers binaire}
+
+Soit n un entier décimal de type \ccode{short}. Soit $b_0$, \ldots, $b_{15}$ sa forme binaire ($b_i\in\{0,1\}$).
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+\hline
+$b_{15}$&$b_{14}$&$b_{13}$&$b_{12}$&$b_{11}$&$b_{10}$&$b_9$&$b_8$&$b_7$&$b_6$&$b_5$&$b_4$&$b_3$&$b_2$&$b_1$&$b_0$\\
+\hline
+\end{tabular}
+\end{center}
+
+On a :
+$$n=\begin{cases}
+    \sum_{i=0}^{14}b_i2^i&\text{si }n\geq0\\
+    -2^{15}+\sum_{i=0}^{14}b_i2^i&\text{si }n<0
+    \end{cases}$$
+
+Remarques :
+\begin{itemize}
+  \item n=1 => \textbf{0}000 0001
+  \item n=-1 => 128-1=127 => \textbf{1}111 1111
+  \item Soit $div$ l'opérateur de division entière et $mod$ l'opérateur reste de la division entière, alors pour tout entier $n$, on a : $n = (n\ div\ k)*k\ +\ (n\ mod\ k)$.
+  \item Schéma de Horner sur un nombre non signé : $$n=\sum\limits_{i=0}^{N-1}b_iB^i=b_0+B[b_1+B[b_2+\ldots+B[b_{N-2}+Bb_{N-1}]]]]$$
+    \begin{enumerate}
+          \item $b_0=n\mod B$
+          \item $b_1=(n\div B) \mod B$
+          \item $b_2=((n\div B) \div B) \mod B$
+          \item \ldots
+      \end{enumerate}
+    Exemple : $n=5$ $\Longrightarrow$ $0101$ en base $2$.
+\end{itemize}
+
+\begin{warning}
+Vous ne devez jamais calculer $B^i$ dans le schéma de Horner.
+\end{warning}
+ 
+
+\begin{enumerate}
+  \item Écrire la fonction \ccode{Dec2Bin} qui admet deux paramètres (un nombre entier de type \ccode{short} et un tableau de 16 entiers) et qui stocke dans ce tableau la représentation binaire signée de l'entier.
+
+
+\begin{correction}
+La même convention de représentation que l'exercice précédent est utilisée.
+
+Il est important de remarquer que :
+$$\sum_{i=0}^{14}b_i2^i=\begin{cases}
+                          n&\text{si }b_{15}=0\text{ i.e. }n\geq0\\ 
+                          n+-2^{15}&\text{si }b_{15}=1\text{ i.e. }n<0
+                        \end{cases}$$
+\end{correction}
+\begin{csourcecorrection}
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h> 
+
+void Dec2Bin( short n, int b[] ) 
+{
+  int i;
+
+  if (n<0)
+  {
+    b[15] = 1;
+    n = (int) (pow(2,15) + n);
+  }
+  else
+    b[15] = 0;
+
+  for( i = 0; i < 15; i++)
+  {
+    b[i] = n % 2;
+    n = (n -b[i]) / 2;
+  }
+}
+\end{csourcecorrection}
+\begin{correction}
+Autre solution :
+\end{correction}
+\begin{csourcecorrection}
+void Dec2Bin( short n, int b[] )
+{
+  int i;
+
+  for( i = 0; i < 16; ++i)
+    b[i] = (n & (1 << i)) > 0;
+}
+\end{csourcecorrection}
+  \item Écrire la fonction \ccode{main} qui demande la saisie d'un nombre entier de type short et qui affiche sa représentation binaire.
+\begin{csourcecorrection}
+int main(void)
+{
+  int b[16];
+  int n;
+  int i;
+
+  printf("Saisissez un nombre entier :");
+  scanf("%hd", &n);
+  Dec2Bin(n,b);
+  printf("\n");
+  for( i = 15; i >=0; --i)
+    printf("%hd", b[i]);
+  printf("\n");
+  return 0;
+}
+\end{csourcecorrection}
+\end{enumerate}
+
+
+
+\section{Conversion d'une chaîne de caractères héxadécimale en un entier}
+
+On considère la chaîne de caractères s qui représente un entier non signé sous forme hexadécimale. La chaîne s se présente sous une des formes suivantes : \ccode{"0X1AB97"}, \ccode{"0x1AB97"}, \ccode{"0x1aB97"} ou \ccode{"0X1Ab97"}.
+Écrire la fonction admettant comme argument un pointeur sur la chaîne s et qui renvoie l'entier représenté par la chaîne s. Ecrire la fonction \ccode{main} associée.
+
+\begin{correction}
+Le principe est similaire à celui de la conversion de base B vers décimale.
+\end{correction}
+\begin{csourcecorrection}
+#include <stdio.h>
+
+int hexaToint( char * hexa )
+{
+  int n = 0;
+  int v;
+  int i;
+
+  if (hexa[0] == '0')
+    if ((hexa[1] == 'x') || (hexa[1] == 'X'))
+    {
+      i = 2;
+      do
+      {
+        if (('0'<=hexa[i]) && (hexa[i]<='9'))
+          v = hexa[i] - '0';
+        else
+          if (('a'<=hexa[i]) && (hexa[i]<='z'))
+            v = hexa[i] - 'a'+10;
+          else
+            if (('A'<=hexa[i]) && (hexa[i] <= 'Z'))
+              v = hexa[i] - 'A' + 10;
+            else
+              return n;
+        n = n*16+v;
+        ++i;
+      }
+      while (1);
+    }
+  return -1;
+}
+
+int main(void)
+{
+  char * h = "0x14dE1";
+  char buf[200];
+  int n = hexaToint(h);
+
+  printf("%d\n", n); // affiche 85473
+
+  gets(buf);
+  n = hexaToint(buf);
+  printf("%d\n", n);
+  return 0;
+}
+\end{csourcecorrection}
+
+\section{Conversion d'un entier en une chaîne de caractères}
+
+Écrire une fonction qui admet deux paramètres (un entier n et un tableau s de caractères suffisamment grand), et qui écrit dans s la représentation de n sous forme d'une chaîne de caractères. Ecrire la fonction \ccode{main} associée. Lorsque le nombre n est négatif, le signe '-' doit précéder les nombres dans la chaîne s.
+
+Les fonctions de \ccode{MyString.h} peuvent être utilisées.
+
+\begin{correction}Le principe est similaire à celui de la conversion d'un entier en base B sauf que l'on stocke des caractères plutôt que des nombres.\end{correction}
+\begin{csourcecorrection}
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void inverse( char * s );
+
+char * intTostring( int n, char * s )
+{
+  char temp[2];
+  int negatif;
+
+  temp[1] = '\0';
+  s[0] ='\0';
+  if (n < 0)
+  {
+    negatif = 1;
+    n = -n;
+  }
+  else
+    negatif = 0;
+
+  do
+  {
+    temp[0] = '0'+ (n % 10);
+    n /= 10;
+    strcat(s,temp);
+  }
+  while (n > 0);
+  if (negatif)
+    strcat(s,"-");
+
+  inverse(s);
+  return s;
+}
+
+void inverse( char * s )
+{
+  int i, j;
+  int len = strlen(s);
+  char c;
+
+  for( i = 0, j = len-1; i<j; ++i, --j )
+  {
+    c = s[i];
+    s[i] = s[j];
+    s[j] = c;
+  }
+}
+
+int main(void)
+{
+  char Result[20];
+
+  intTostring(-102,Result);
+  strcat(Result,"\n");
+  printf(Result);
+  return 0;
+}
+\end{csourcecorrection}
+

@@ -1,0 +1,20 @@
+\def\marvel@title{Undefined title}
+\def\marvel@shorttitle{Undefined title}
+\def\marvel@subtitle{}
+\def\marvel@author{Author undefined}
+\def\marvel@shortauthor{Author undefined}
+\def\marvel@date{\@date}
+\def\marvel@titlepageauthorextra{}
+\def\marvel@titlepageinstitute{}
+\def\marvel@titlepagenotice{}
+\def\marvel@titlepagelogo{}
+
+
+\renewcommand{\title}[2][\marvel@title]{\renewcommand{\marvel@title}{#2}\renewcommand{\marvel@shorttitle}{#1}}
+\renewcommand{\subtitle}[1]{\renewcommand{\marvel@subtitle}{#1}}
+\renewcommand{\author}[2][\marvel@author]{\renewcommand{\marvel@author}{#2}\renewcommand{\marvel@shortauthor}{#1}}
+\renewcommand{\date}[1]{\renewcommand{\marvel@date}{#1}}
+\newcommand{\titlepageinstitute}[1]{\renewcommand{\marvel@titlepageinstitute}{#1}}
+\newcommand{\titlepageauthorextra}[1]{\renewcommand{\marvel@titlepageauthorextra}{#1}}
+\newcommand{\titlepagelogo}[1]{\renewcommand{\marvel@titlepagelogo}{#1}}
+\newcommand{\titlepagenotice}[1]{\renewcommand{\marvel@titlepagenotice}{#1}}

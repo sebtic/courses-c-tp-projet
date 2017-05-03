@@ -1,0 +1,527 @@
+\chapter{TP9 : Gestion du catalogue des produits}
+
+\section{Manipulation des produits}
+
+Les exercices suivants doivent vous permettre de remplir le fichier \ccode{CatalogRecord.c}.
+
+Soit les définitions suivantes permettant de déclarer les constantes et types de données associés à un produit.
+\begin{csource}
+/** The size in bytes of the code field of a CatalogRecord */
+#define CATALOGRECORD_CODE_SIZE 16UL
+/** The size in bytes of the designation field of a CatalogRecord */
+#define CATALOGRECORD_DESIGNATION_SIZE 128UL
+/** The size in bytes of the unity field of a CatalogRecord */
+#define CATALOGRECORD_UNITY_SIZE 20UL
+/** The size in bytes of the basePrice field of a CatalogRecord */
+#define CATALOGRECORD_BASEPRICE_SIZE ((unsigned long) sizeof(double))
+/** The size in bytes of the sellingPrice field of a CatalogRecord */
+#define CATALOGRECORD_SELLINGPRICE_SIZE ((unsigned long) sizeof(double))
+/** The size in bytes of the rateOfVAT field of a CatalogRecord */
+#define CATALOGRECORD_RATEOFVAT_SIZE ((unsigned long) sizeof(double))
+
+/** The size in bytes of all the packed fields of a CatalogRecord */
+#define CATALOGRECORD_SIZE (CATALOGRECORD_CODE_SIZE + \
+                            CATALOGRECORD_DESIGNATION_SIZE + \
+                            CATALOGRECORD_UNITY_SIZE + \
+                            CATALOGRECORD_BASEPRICE_SIZE + \
+                            CATALOGRECORD_SELLINGPRICE_SIZE + \
+                            CATALOGRECORD_RATEOFVAT_SIZE)
+
+/** The maximal length in characters of the string fields of a CatalogRecord */
+#define CATALOGRECORD_MAXSTRING_SIZE ( \
+			MAXVALUE(CATALOGRECORD_CODE_SIZE, \
+			MAXVALUE(CATALOGRECORD_DESIGNATION_SIZE,CATALOGRECORD_UNITY_SIZE)))
+
+/** A catalog record
+ */
+typedef struct {
+    char * code /** The code of the product */;
+    char * designation /** The designation of the product */;
+    char * unity /** The unity of the product */;
+    double basePrice /** The base price of the product (the product should not be sold at a lower price) */;
+    double sellingPrice /** The selling price of the product */;
+    double rateOfVAT /** The rate of the VAT of the product */;
+} CatalogRecord;
+
+\end{csource}
+
+\subsection{Les vérificateurs}
+
+Ecrire la fonction \ccode{int CatalogRecord_isValueValid_code(const char * value)} qui retourne vrai si et seulement si le paramètre ne contient que des chiffres et des lettres.
+
+\begin{csourcecorrection}
+int CatalogRecord_isValueValid_code(const char * value) {
+    const char * p;
+    p = value;
+    while (*p != '\0') {
+        if (!(('0' <= *p && *p <= '9') || ('a' <= *p && *p <= 'z') || ('A' <= *p && *p <= 'Z')))
+            return 0;
+        p++;
+    }
+    return p != value;
+}
+\end{csourcecorrection}
+
+Ecrire la fonction \ccode{int CatalogRecord_isValueValid_positiveNumber(const char * value)} qui retourne vrai si et seulement si le paramètre est dans sa totalité un nombre positif. Pour faciliter le travail, on pourra utiliser la fonction \ccode{strtod}.
+
+\begin{csource}
+double strtod (const char *nptr, char **endptr);
+\end{csource}
+Cette fonction renvoie la valeur convertie si c'est possible.
+Si \ccode{endptr} n'est pas \ccode{NULL}, un pointeur sur le caractère suivant le dernier caractère converti y est stocké.
+Si aucune conversion n'est possible, la fonction renvoie zéro, et la valeur de \ccode{nptr} est stockée dans \ccode{endptr}.
+La documentation complète de cette fonction peut être obtenue en ligne de commande avec :
+\begin{bashsource}
+man strtod
+\end{bashsource}
+
+
+\begin{csourcecorrection}
+int CatalogRecord_isValueValid_positiveNumber(const char * value) {
+    char * end;
+    double val;
+    end = NULL;
+    val = strtod(value, &end);
+    return (end != value && *end == '\0' && val >= 0);
+}
+\end{csourcecorrection}
+
+\subsection{Les accesseurs}
+
+Ecrire les fonctions suivantes qui permettent de modifier le contenu d'un champ d'un enregistrement.
+\begin{itemize}
+  \item \ccode{void CatalogRecord_setValue_code(CatalogRecord * record, const char * value)}
+\begin{csourcecorrection}
+void CatalogRecord_setValue_code(CatalogRecord * record, const char * value) {
+    free(record->code);
+    record->code = duplicateString(value);
+}
+\end{csourcecorrection}
+  \item \ccode{void CatalogRecord_setValue_designation(CatalogRecord * record, const char * value)}
+\begin{csourcecorrection}
+void CatalogRecord_setValue_designation(CatalogRecord * record, const char * value) {
+    free(record->designation);
+    record->designation = duplicateString(value);
+}
+\end{csourcecorrection}
+  \item \ccode{void CatalogRecord_setValue_unity(CatalogRecord * record, const char * value}
+\begin{csourcecorrection}
+void CatalogRecord_setValue_unity(CatalogRecord * record, const char * value) {
+    free(record->unity);
+    record->unity = duplicateString(value);
+}
+\end{csourcecorrection}
+  \item \ccode{void CatalogRecord_setValue_basePrice(CatalogRecord * record, const char * value)}
+\begin{csourcecorrection}
+void CatalogRecord_setValue_basePrice(CatalogRecord * record, const char * value) {
+    record->basePrice = atof(value);
+}
+\end{csourcecorrection}
+  \item \ccode{void CatalogRecord_setValue_sellingPrice(CatalogRecord * record, const char * value)}
+\begin{csourcecorrection}
+void CatalogRecord_setValue_sellingPrice(CatalogRecord * record, const char * value) {
+    record->sellingPrice = atof(value);
+}
+\end{csourcecorrection}
+  \item \ccode{void CatalogRecord_setValue_rateOfVAT(CatalogRecord * record, const char * value)}
+\begin{csourcecorrection}
+void CatalogRecord_setValue_rateOfVAT(CatalogRecord * record, const char * value) {
+    record->rateOfVAT = atof(value);
+}
+\end{csourcecorrection}
+\end{itemize}
+
+
+Ecrire les fonctions suivantes qui permettent d'obtenir une copie sur le tas de la valeur d'un champ d'un enregistrement sous forme d'une chaîne de caractères.
+\begin{itemize}
+\item \ccode{char * CatalogRecord_getValue_code(CatalogRecord * record)}
+\begin{csourcecorrection}
+char * CatalogRecord_getValue_code(CatalogRecord * record) {
+    return duplicateString(record->code);
+}
+\end{csourcecorrection}
+\item \ccode{char * CatalogRecord_getValue_designation(CatalogRecord * record)}
+\begin{csourcecorrection}
+char * CatalogRecord_getValue_designation(CatalogRecord * record) {
+    return duplicateString(record->designation);
+}
+\end{csourcecorrection}
+\item \ccode{char * CatalogRecord_getValue_unity(CatalogRecord * record)}
+\begin{csourcecorrection}
+char * CatalogRecord_getValue_unity(CatalogRecord * record) {
+    return duplicateString(record->unity);
+}
+\end{csourcecorrection}
+\item \ccode{char * CatalogRecord_getValue_basePrice(CatalogRecord * record)}
+\begin{csourcecorrection}
+char * CatalogRecord_getValue_basePrice(CatalogRecord * record) {
+    char buf[1024];
+    sprintf(buf, "%.2f", record->basePrice);
+    return duplicateString(buf);
+}
+\end{csourcecorrection}
+\item \ccode{char * CatalogRecord_getValue_sellingPrice(CatalogRecord * record)}
+\begin{csourcecorrection}
+char * CatalogRecord_getValue_sellingPrice(CatalogRecord * record) {
+    char buf[1024];
+    sprintf(buf, "%.2f", record->sellingPrice);
+    return duplicateString(buf);
+}
+\end{csourcecorrection}
+\item \ccode{char * CatalogRecord_getValue_rateOfVAT(CatalogRecord * record)}
+\begin{csourcecorrection}
+char * CatalogRecord_getValue_rateOfVAT(CatalogRecord * record) {
+    char buf[1024];
+    sprintf(buf, "%.2f", record->rateOfVAT);
+    return duplicateString(buf);
+}
+\end{csourcecorrection}
+\end{itemize}
+
+
+\subsection{Initialisation}
+
+Ecrire la fonction \ccode{void CatalogRecord_init(CatalogRecord * record)} qui initialise l'enregistrement fourni en paramètre.
+\begin{csourcecorrection}
+void CatalogRecord_init(CatalogRecord * record) {
+    record->code = duplicateString("");
+    record->designation = duplicateString("");
+    record->unity = duplicateString("");
+    record->basePrice = 0;
+    record->sellingPrice = 0;
+    record->rateOfVAT = 0;
+}
+\end{csourcecorrection}
+
+\subsection{Finalisation}
+
+Ecrire la fonction \ccode{void CatalogRecord_finalize(CatalogRecord * record)} qui finalise un enregistrement (libère les ressources qui ne sont plus nécessaires).
+\begin{csourcecorrection}
+void CatalogRecord_finalize(CatalogRecord * record) {
+    if (record->code != NULL)
+        free(record->code);
+    if (record->designation != NULL)
+        free(record->designation);
+    if (record->unity != NULL)
+        free(record->unity);
+}
+\end{csourcecorrection}
+
+\subsection{Lecture à partir d'un fichier binaire}
+
+Ecrire la fonction \ccode{void CatalogRecord_read(CatalogRecord * record, FILE * file)} qui permet de lire le contenu d'un enregistrement à partir du fichier binaire et qui stocke les informations dans l'enregistrement. Le fichier binaire contient que des enregistrements de taille fixe de \ccode{CATALOGRECORD_SIZE} octets. On prendra soin de ne pas écrire d'octets de padding dans la fichier.
+
+\begin{csourcecorrection}
+void CatalogRecord_read(CatalogRecord * record, FILE * file) {
+    char buffer[CATALOGRECORD_MAXSTRING_SIZE];
+
+    if (fread(buffer, CATALOGRECORD_CODE_SIZE, 1, file) != 1)
+        fatalError("CatalogRecord_Read: fread");
+    if (record->code != NULL)
+        free(record->code);
+    record->code = duplicateString(buffer);
+
+    if (fread(buffer, CATALOGRECORD_DESIGNATION_SIZE, 1, file) != 1)
+        fatalError("CatalogRecord_Read: fread");
+    if (record->designation != NULL)
+        free(record->designation);
+    record->designation = duplicateString(buffer);
+
+    if (fread(buffer, CATALOGRECORD_UNITY_SIZE, 1, file) != 1)
+        fatalError("CatalogRecord_Read: fread");
+    if (record->unity != NULL)
+        free(record->unity);
+    record->unity = duplicateString(buffer);
+
+    if (fread(&record->basePrice, sizeof(record->basePrice), 1, file) != 1)
+        fatalError("CatalogRecord_Read: fread");
+
+    if (fread(&record->sellingPrice, sizeof(record->sellingPrice), 1, file) != 1)
+        fatalError("CatalogRecord_Read: fread");
+
+    if (fread(&record->rateOfVAT, sizeof(record->rateOfVAT), 1, file) != 1)
+        fatalError("CatalogRecord_Read: fread");
+}
+\end{csourcecorrection}
+
+
+\subsection{Ecriture dans un fichier binaire}
+
+Ecrire la fonction \ccode{void CatalogRecord_write(CatalogRecord * record, FILE * file)} qui permet d'écrire le con\-te\-nu d'un enregistrement dans un fichier binaire. Cette fonction est la réciproque de la précédente.
+
+\begin{csourcecorrection}
+static void zeroTab(char * tab, int size) {
+    while (size > 0) {
+        *tab = '\0';
+        tab++;
+        size--;
+    }
+}
+
+void CatalogRecord_write(CatalogRecord * record, FILE * file) {
+    char buffer[CATALOGRECORD_MAXSTRING_SIZE];
+
+    zeroTab(buffer, CATALOGRECORD_MAXSTRING_SIZE);
+
+    copyStringWithLength(buffer, record->code, CATALOGRECORD_CODE_SIZE);
+    if (fwrite(buffer, CATALOGRECORD_CODE_SIZE, 1, file) != 1)
+        fatalError("CatalogRecord_Write: fwrite");
+
+    copyStringWithLength(buffer, record->designation, CATALOGRECORD_DESIGNATION_SIZE);
+    if (fwrite(buffer, CATALOGRECORD_DESIGNATION_SIZE, 1, file) != 1)
+        fatalError("CatalogRecord_Write: fwrite");
+
+    copyStringWithLength(buffer, record->unity, CATALOGRECORD_UNITY_SIZE);
+    if (fwrite(buffer, CATALOGRECORD_UNITY_SIZE, 1, file) != 1)
+        fatalError("CatalogRecord_Write: fwrite");
+
+    if (fwrite(&record->basePrice, sizeof(record->basePrice), 1, file) != 1)
+        fatalError("CatalogRecord_Write: fwrite");
+
+    if (fwrite(&record->sellingPrice, sizeof(record->sellingPrice), 1, file) != 1)
+        fatalError("CatalogRecord_Write: fwrite");
+
+    if (fwrite(&record->rateOfVAT, sizeof(record->rateOfVAT), 1, file) != 1)
+        fatalError("CatalogRecord_Write: fwrite");
+}
+
+\end{csourcecorrection}
+
+
+\section{Manipulation d'un catalogue de produits}
+
+Les exercices suivants doivent vous permettre de remplir le fichier \ccode{CatalogDB.c}.
+
+Soit la structure de données suivante.
+\begin{csource}
+/** The structure which represents an opened catalog database */
+typedef struct _CatalogDB {
+    FILE * file; /**< The FILE pointer for the associated file */
+    int recordCount; /**< The number of record in the database */
+} CatalogDB;
+\end{csource}
+
+Cette structure de données joue un rôle similaire à \ccode{FILE} pour les fonctions d'E/S standards. Chaque fichier catalogue ne peut être manipulé qu'en ayant une structure de ce type à disposition. La structure stocke :
+\begin{itemize}
+  \item un attribut \ccode{file} : c'est le lien vers le fichier ouvert;
+  \item un attribut \ccode{recordCount} : c'est le nombre d'enregistrement stocké dans le fichier client. Il est modifié au fur et à mesure des opérations sur le fichier client mais n'est écrit qu'à la fermeture du fichier.
+\end{itemize}
+
+Un fichier catalogue est un fichier binaire dont le contenu est structuré de la façon suivante :
+\begin{itemize}
+  \item le fichier début par un entier de type \ccode{int} stockant le nombre d'enregistrement valide du fichier catalogue;
+  \item le reste du fichier est constitué des données des enregistrements des produits mis bout à bout. Chaque enregistrement à une taille fixe de \ccode{CATALOGRECORD_SIZE} octets.
+\end{itemize}
+
+\subsection{Création d'un fichier catalogue}
+
+Ecrire la fonction \ccode{CatalogDB * CatalogDB_create(const char * filename)} qui crée et ouvre en lecture/écriture un fichier catalogue et retourne une structure permettant de manipuler le contenu du fichier. En cas d'échec d'ouverture du fichier, la fonction renvoie \ccode{NULL} (le fonctionnement est similaire à la fonction \ccode{fopen}). Dans les autres cas d'erreurs, la programme se termine.
+
+\begin{csourcecorrection}
+CatalogDB * CatalogDB_create(const char * filename) {
+    CatalogDB * catalogDB;
+
+    catalogDB = (CatalogDB*) malloc(sizeof(CatalogDB));
+    if (catalogDB == NULL)
+        fatalError("CatalogDB_Create: malloc failed");
+
+    catalogDB->file = fopen(filename, "w+b");
+    if (catalogDB->file == NULL) {
+        free(catalogDB);
+        return NULL;
+    }
+
+    catalogDB->recordCount = 0;
+    fseek(catalogDB->file, 0, SEEK_SET);
+    if (fwrite(&catalogDB->recordCount, sizeof(catalogDB->recordCount), 1, catalogDB->file) != 1) {
+        fclose(catalogDB->file);
+        free(catalogDB);
+        fatalError("CatalogDB_Create: fwrite failed");
+    }
+    return catalogDB;
+}
+\end{csourcecorrection}
+
+
+\subsection{Ouverture d'un fichier catalogue existant}
+
+Ecrire la fonction \ccode{CatalogDB * CatalogDB_open(const char * filename)} qui ouvre en lecture/écriture un fichier catalogue existant et retourne une structure permettant de manipuler le contenu du fichier. En cas d'échec d'ouverture du fichier, la fonction renvoie \ccode{NULL} (le fonctionnement est similaire à la fonction \ccode{fopen}).  Dans les autres cas d'erreurs, la programme se termine.
+
+\begin{csourcecorrection}
+CatalogDB * CatalogDB_open(const char * filename) {
+    CatalogDB * catalogDB;
+    catalogDB = (CatalogDB*) malloc(sizeof(CatalogDB));
+    if (catalogDB == NULL)
+        fatalError("CatalogDB_Open: malloc failed");
+
+    catalogDB->file = fopen(filename, "r+b");
+    if (catalogDB->file == NULL) {
+        free(catalogDB);
+        return NULL;
+    }
+
+    fseek(catalogDB->file, 0, SEEK_SET);
+    if (fread(&catalogDB->recordCount, sizeof(catalogDB->recordCount), 1, catalogDB->file) != 1) {
+        fclose(catalogDB->file);
+        free(catalogDB);
+        fatalError("CatalogDB_Open: fread failed");
+    }
+    return catalogDB;
+}
+\end{csourcecorrection}
+
+
+\subsection{Ouverture ou, à défaut, création d'un fichier catalogue}
+
+Ecrire la fonction \ccode{CatalogDB * CatalogDB_openOrCreate(const char * filename)} qui ouvre en lecture/écriture un fichier catalogue existant ou, si le fichier n'existe pas, crée et ouvre le fichier. La fonction retourne une structure permettant de manipuler le contenu du fichier. La fonction retourne une structure permettant de manipuler le contenu du fichier. Cette fonction est une combinaison des deux fonctions précédentes.
+
+\begin{csourcecorrection}
+CatalogDB * CatalogDB_openOrCreate(const char * filename) {
+    CatalogDB * catalogDB;
+
+    catalogDB = CatalogDB_open(filename);
+    if (catalogDB == NULL)
+        catalogDB = CatalogDB_create(filename);
+    return catalogDB;
+}
+\end{csourcecorrection}
+
+\subsection{Fermeture d'un fichier catalogue}
+
+Ecrire la fonction \ccode{void CatalogDB_close(CatalogDB * catalogDB)} qui ferme le fichier catalogue.
+ 
+\begin{csourcecorrection}
+void CatalogDB_close(CatalogDB * catalogDB) {
+    if (catalogDB != NULL) {
+        fseek(catalogDB->file, 0, SEEK_SET);
+        if (fwrite(&catalogDB->recordCount, sizeof(catalogDB->recordCount), 1, catalogDB->file)
+                != 1)
+            fatalError("CatalogDB_Close: fwrite failed");
+        fclose(catalogDB->file);
+        free(catalogDB);
+    }
+}
+\end{csourcecorrection}
+
+\subsection{Obtenir le nombre d'enregistrements du catalogue}
+
+Ecrire la fonction \ccode{int CatalogDB_getRecordCount(CatalogDB * catalogDB)} qui permet d'obtenir le nombre d'enregistrements d'un fichier catalogue ouvert.
+
+\begin{csourcecorrection}
+int CatalogDB_getRecordCount(CatalogDB * catalogDB) {
+    if (catalogDB != NULL)
+        return catalogDB->recordCount;
+    else
+        return 0;
+}
+\end{csourcecorrection}
+
+\subsection{Lecture d'un enregistrement}
+
+Ecrire la fonction \ccode{void CatalogDB_readRecord(CatalogDB * catalogDB, int recordIndex, CatalogRecord * record)} qui permet de lire le \ccode{recordIndex}-ième enregistrement du fichier catalogue et qui stocke les informations lues dans \ccode{record}.
+
+\begin{csourcecorrection}
+void CatalogDB_readRecord(CatalogDB * catalogDB, int recordIndex, CatalogRecord * record) {
+    if (catalogDB != NULL) {
+        if (recordIndex < 0 || recordIndex >= catalogDB->recordCount)
+            fatalError("CatalogDB_GetRecord: invalid index");
+        fseek(catalogDB->file, (long) sizeof(catalogDB->recordCount) + CATALOGRECORD_SIZE
+                * recordIndex, SEEK_SET);
+        CatalogRecord_read(record, catalogDB->file);
+    }
+}
+\end{csourcecorrection}
+
+\subsection{Ecriture d'un enregistrement}
+
+Ecrire la fonction \ccode{void CatalogDB_writeRecord(CatalogDB* catalogDB, int recordIndex, CatalogRecord * record)} qui permet d'écrire le \ccode{recordIndex}-ième enregistrement du fichier catalogue. Le nombre d'enregistrements du fichier doit être mis à jours si cette écriture conduit à ajouter un enregistrement à la fin du fichier.
+
+\begin{csourcecorrection}
+void CatalogDB_writeRecord(CatalogDB * catalogDB, int recordIndex, CatalogRecord * record) {
+    if (catalogDB != NULL) {
+        if (recordIndex < 0 || recordIndex > catalogDB->recordCount)
+            fatalError("CatalogDB_SetRecord: invalid index");
+        fseek(catalogDB->file, (long) sizeof(catalogDB->recordCount) + CATALOGRECORD_SIZE
+                * recordIndex, SEEK_SET);
+        CatalogRecord_write(record, catalogDB->file);
+        if (recordIndex == catalogDB->recordCount)
+            catalogDB->recordCount++;
+    }
+}
+\end{csourcecorrection}
+
+\subsection{Insertion d'un enregistrement au sein du fichier}
+
+Ecrire la fonction \ccode{void CatalogDB_insertRecord(CatalogDB* catalogDB,int recordIndex, CatalogRecord * record)} qui insère le contenu d'un enregistrement à la position \ccode{recordIndex}.
+
+\begin{csourcecorrection}
+void CatalogDB_insertRecord(CatalogDB * catalogDB, int recordIndex, CatalogRecord * record) {
+    if (catalogDB != NULL) {
+        int i;
+        CatalogRecord temp;
+        CatalogRecord_init(&temp);
+        for (i = CatalogDB_getRecordCount(catalogDB); i > recordIndex; --i) {
+            CatalogDB_readRecord(catalogDB, i - 1, &temp);
+            CatalogDB_writeRecord(catalogDB, i, &temp);
+        }
+        CatalogDB_writeRecord(catalogDB, recordIndex, record);
+        CatalogRecord_finalize(&temp);
+    }
+}
+\end{csourcecorrection}
+
+\subsection{Ajout d'un enregistrement à la fin}
+
+Ecrire la fonction \ccode{void CatalogDB_appendRecord(CatalogDB * catalogDB, CatalogRecord *record)} qui ajou\-te un enregistrement à la fin du fichier clients.
+
+\begin{csourcecorrection}
+void CatalogDB_appendRecord(CatalogDB * catalogDB, CatalogRecord *record) {
+    CatalogDB_insertRecord(catalogDB, CatalogDB_getRecordCount(catalogDB), record);
+}
+\end{csourcecorrection}
+
+\subsection{Suppression d'un enregistrement}
+
+Ecrire la fonction \ccode{void CatalogDB_removeRecord(CatalogDB * catalogDB, int recordIndex)} qui permet de supprimer l'enregistrement se trouvant à la position \ccode{recordIndex} du fichier catalogue. On ne cherchera pas à redimensionner le fichier.
+
+\begin{csourcecorrection}
+void CatalogDB_removeRecord(CatalogDB * catalogDB, int recordIndex) {
+    if (catalogDB != NULL) {
+        CatalogRecord temp;
+        int i;
+        CatalogRecord_init(&temp);
+        for (i = recordIndex; i < CatalogDB_getRecordCount(catalogDB) - 1; ++i) {
+            CatalogDB_readRecord(catalogDB, i + 1, &temp);
+            CatalogDB_writeRecord(catalogDB, i, &temp);
+        }
+        catalogDB->recordCount--;
+        CatalogRecord_finalize(&temp);
+    }
+}
+\end{csourcecorrection}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

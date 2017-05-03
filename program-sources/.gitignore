@@ -1,0 +1,7 @@
+bindist/
+debug/
+doc/
+provided/
+provideddebug/
+providedrelease/
+release/

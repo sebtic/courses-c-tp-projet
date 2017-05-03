@@ -1,0 +1,237 @@
+\chapter{TD6 : Gestion des opérateurs}
+
+Cette série d'exercices devrait vous permettre de compléter par vous même les fonctions de \ccode{OperatorTable.c}. Ce module a pour objectif de gérer la liste des utilisateurs et de leurs mots de passe pour le logiciel. Cette liste est stockée dans un fichier texte crypté selon la méthode de Vigenère. En mémoire, la liste des utilisateurs est stockée sous la forme d'un tableau dynamique. Chaque élément du tableau est lui même un tableau de deux chaînes de caractères de taille variable : la première chaîne est le nom de l'utilisateur, la deuxième chaîne est le mot de passe de l'utilisateur. La structure de données associées est la suivante :
+\begin{csource}
+/** The maximal length in characters of the name of an operator */
+#define OPERATORTABLE_MAXNAMESIZE 20UL
+/** The maximal length in characters of the password of an operator */
+#define OPERATORTABLE_MAXPASSWORDSIZE 20UL
+
+/** The dynamic table of operators */
+typedef struct {
+    /** The number of operators in the table */
+    int recordCount;
+    /** The data about the operators. It's a 2D array of strings.
+     * Note: records[operatorId][0] is the name of the operatorId'th operator
+     * Note: records[operatorId][1] is the password of the operatorId'th operator
+     */
+    char *** records;
+} OperatorTable;
+\end{csource}
+Pour simplifier la gestion des E/S sur les fichiers, les noms et mots de passe sont respectivement limités à \linebreak\ccode{OPERATORTABLE_MAXNAMESIZE} et \ccode{OPERATORTABLE_MAXPASSWORDSIZE} caractères (y compris le marqueur de fin de chaîne).
+
+\section{Liste des opérateurs en mémoire}
+
+\subsection{Création de liste}
+
+Ecrire la fonction \ccode{OperatorTable * OperatorTable_create(void)} qui retourne un pointeur sur une structure \linebreak\ccode{OperatorTable} allouée sur le tas et correctement initialisée de manière à représenter une liste vide.
+
+\begin{csourcecorrection}
+OperatorTable * OperatorTable_create(void) {
+    OperatorTable * table;
+
+    table = (OperatorTable*) malloc(sizeof(OperatorTable));
+    if (table != NULL) {
+        table->recordCount = 0;
+        table->records = NULL;
+    }
+    return table;
+}
+\end{csourcecorrection}
+
+\subsection{Obtenir le nombre d'opérateurs}
+
+Ecrire la fonction \ccode{int OperatorTable_getRecordCount(OperatorTable * table)} qui retourne le nombre d'opérateurs de la liste.
+
+\begin{csourcecorrection}
+int OperatorTable_getRecordCount(OperatorTable * table) {
+   return table->recordCount;
+}
+\end{csourcecorrection}
+
+\subsection{Obtenir le nom d'un opérateur à partir de la position dans la liste}
+
+Ecrire la fonction \ccode{const char * OperatorTable_getName(OperatorTable * table, int recordNum)} qui retourne le nom du \ccode{recordNum}-ième opérateur de la liste.
+
+\begin{csourcecorrection}
+const char * OperatorTable_getName(OperatorTable * table, int recordNum) {
+    if (recordNum < 0 || recordNum > table->recordCount)
+        fatalError("OperatorTable_GetName");
+    return table->records[recordNum][0];
+}
+\end{csourcecorrection}
+
+\subsection{Obtenir le mot de passe d'un opérateur à partir de la position dans la liste}
+
+Ecrire la fonction \ccode{const char * OperatorTable_getPassword(OperatorTable * table, int recordNum)} qui retourne le mot de passe du \ccode{recordNum}-ième opérateur de la liste.
+
+\begin{csourcecorrection}
+const char * OperatorTable_getPassword(OperatorTable * table, int recordNum) {
+    if (recordNum < 0 || recordNum > table->recordCount)
+        fatalError("OperatorTable_GetPassword");
+    return table->records[recordNum][1];
+}
+\end{csourcecorrection}
+
+
+\subsection{Recherche d'un opérateur dans la liste}
+
+Ecrire la fonction \ccode{int OperatorTable_findOperator(OperatorTable * table, const char * name)} qui retourne la position de l'opérateur dans la liste associé au nom \ccode{name} ou -1 si l'opérateur n'a pas pu être trouvé. Les comparaisons de noms d'opérateurs sont insensibles à la casse.
+
+\begin{csourcecorrection}
+int OperatorTable_findOperator(OperatorTable * table, const char * name) {
+    int i;
+    for (i = 0; i < OperatorTable_getRecordCount(table); ++i)
+        if (icaseCompareString(OperatorTable_getName(table, i), name) == 0)
+            return i;
+    return -1;
+}
+\end{csourcecorrection}
+
+\subsection{Définir ou modifier le mot de passe d'un opérateur}
+
+Ecrire la fonction \ccode{int OperatorTable_setOperator(OperatorTable * table,  const char * name,  const  char  *  password )} qui permet de définir un opérateur et son mot de passe s'il n'est pas déjà dans la liste ou qui modifie le mot de passe d'un opérateur déjà présent dans la liste. Les comparaisons de noms d'opérateurs sont insensibles à la casse. La valeur retourné est la position de l'utilisateur dans la table des opérateurs.
+
+\begin{csourcecorrection}
+int OperatorTable_setOperator(OperatorTable * table, const char * name,
+        const char * password) {
+    int i;
+
+    for (i = 0; i < OperatorTable_getRecordCount(table); ++i)
+        if (icaseCompareString(OperatorTable_getName(table, i), name) == 0) {
+            free(table->records[i][1]);
+            table->records[i][1] = duplicateString(password);
+            return i;
+        }
+
+    table->records = (char***) realloc(table->records, sizeof(char**)
+            * ((unsigned int) table->recordCount + 1));
+    if (table->records == NULL)
+        fatalError("Echec de réallocation");
+    table->records[table->recordCount] = (char**) malloc(sizeof(char*) * 2);
+    table->records[table->recordCount][0] = duplicateString(name);
+    table->records[table->recordCount][1] = duplicateString(password);
+    table->recordCount++;
+    return table->recordCount - 1;
+}
+\end{csourcecorrection}
+
+\subsection{Suppression d'un opérateur de la liste}
+
+Ecrire la fonction \ccode{void OperatorTable_removeRecord(OperatorTable * table, int recordIndex)} qui supprime l'opérateur à la position \ccode{recordIndex} de la liste.
+
+\begin{csourcecorrection}
+void OperatorTable_removeRecord(OperatorTable * table, int recordIndex) {
+    int i;
+
+    free(table->records[recordIndex][0]);
+    free(table->records[recordIndex][1]);
+    free(table->records[recordIndex]);
+    for (i = recordIndex + 1; i < table->recordCount; ++i) {
+        table->records[i - 1] = table->records[i];
+    }
+    table->records = (char***) realloc(table->records, sizeof(char**)
+            * ((unsigned int) table->recordCount - 1));
+    table->recordCount--;
+}
+\end{csourcecorrection}
+
+\subsection{Destruction de liste}
+
+Ecrire la fonction \ccode{void OperatorTable_destroy(OperatorTable * table)} qui desalloue la mémoire associée à une liste d'opérateurs.
+
+\begin{csourcecorrection}
+void OperatorTable_destroy(OperatorTable * table) {
+    int i;
+
+    if (table != NULL) {
+        for (i = 0; i < table->recordCount; ++i) {
+            free(table->records[i][0]);
+            free(table->records[i][1]);
+            free(table->records[i]);
+        }
+        free(table->records);
+        free(table);
+    }
+}
+\end{csourcecorrection}
+
+\section{Liste des opérateurs dans un fichier texte}
+
+\subsection{Lecture de la liste des opérateurs}
+
+Ecrire la fonction \ccode{OperatorTable * OperatorTable_loadFromFile(const char * filename)} qui charge la liste des opérateurs à partir du fichier texte crypté par la méthode de Vigenère.
+
+Pour rappel : \ccode{fgets()} lit au plus \ccode{size-1} caractères depuis \ccode{stream} et les place dans le tampon pointé par \ccode{s}.  La lecture s'arrête après \ccode{EOF} ou un retour-chariot. Si un retour-chariot (newline) est  lu,  il est placé dans le tampon. Un octet nul \ccode{\0} est placé à  la fin de la ligne.
+\begin{csource}
+char * fgets (char * s, int size, FILE * stream);
+\end{csource}
+
+\begin{csourcecorrection}
+OperatorTable * OperatorTable_loadFromFile(const char * filename) {
+    char buf[128];
+    char namebuf[OPERATORTABLE_MAXNAMESIZE];
+    char passwordbuf[OPERATORTABLE_MAXPASSWORDSIZE];
+    OperatorTable * table;
+    FILE * fichier;
+
+    table = OperatorTable_create();
+    fichier = fopen(filename, "rt");
+    if (fichier != NULL) {
+        int i;
+        int nbEnr;
+        if (fgets(buf, 128, fichier) == NULL)
+            fatalError("OperatorDB_LoadFromFile: fgets");
+
+        nbEnr = atoi(buf);
+        for (i = 0; i < nbEnr; ++i) {
+            if (fgets(namebuf, OPERATORTABLE_MAXNAMESIZE, fichier) == NULL)
+                fatalError("OperatorDB_LoadFromFile: fgets");
+            if (fgets(passwordbuf, OPERATORTABLE_MAXPASSWORDSIZE, fichier) == NULL)
+                fatalError("OperatorDB_LoadFromFile: fgets");
+            /* suppression des sauts de lignes finaux */
+            if (namebuf[stringLength(namebuf) - 1] == '\n')
+                namebuf[stringLength(namebuf) - 1] = '\0';
+            if (passwordbuf[stringLength(passwordbuf) - 1] == '\n')
+                passwordbuf[stringLength(passwordbuf) - 1] = '\0';
+            decrypt(OperatorCryptKey, namebuf);
+            decrypt(OperatorCryptKey, passwordbuf);
+            OperatorTable_setOperator(table, namebuf, passwordbuf);
+        }
+        fclose(fichier);
+    }
+    return table;
+}
+\end{csourcecorrection}
+
+\subsection{Ecriture de la liste des opérateurs}
+
+Ecrire la fonction \ccode{void OperatorTable_saveToFile(OperatorTable * table, const char * filename)} qui écrit la liste des opérateurs dans un fichier texte crypté par la méthode de Vigenère.
+
+\begin{csourcecorrection}
+void OperatorTable_saveToFile(OperatorTable * table, const char * filename) {
+    char namebuf[OPERATORTABLE_MAXNAMESIZE];
+    char passwordbuf[OPERATORTABLE_MAXPASSWORDSIZE];
+    int i;
+    FILE * fichier;
+
+    fichier = fopen(filename, "wt");
+    if (fichier != NULL) {
+        fprintf(fichier, "%d\n", (int) table->recordCount);
+        for (i = 0; i < OperatorTable_getRecordCount(table); ++i) {
+            copyStringWithLength(namebuf, OperatorTable_getName(table, i),
+                    OPERATORTABLE_MAXNAMESIZE);
+            copyStringWithLength(passwordbuf, OperatorTable_getPassword(table, i),
+                    OPERATORTABLE_MAXNAMESIZE);
+            encrypt(OperatorCryptKey, namebuf);
+            encrypt(OperatorCryptKey, passwordbuf);
+            fprintf(fichier, "%s\n%s\n", namebuf, passwordbuf);
+        }
+        fclose(fichier);
+    }
+}
+\end{csourcecorrection}
+
+
+
+

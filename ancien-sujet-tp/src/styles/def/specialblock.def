@@ -1,0 +1,341 @@
+
+
+\ifbool{marvel@french}{
+    \newcommand{\marvel@specialblockbegin}{ (début)}
+    \newcommand{\marvel@specialblockcontinue}{ (suite)}
+    \newcommand{\marvel@specialblockend}{ (suite et fin)}
+}{
+    \newcommand{\marvel@specialblockbegin}{ (to be continued)}
+    \newcommand{\marvel@specialblockcontinue}{ (continued)}
+    \newcommand{\marvel@specialblockend}{ (end)}
+}
+
+\newcounter{marvel@warning@counter}[chapter]
+\newcommand{\marvel@warning@title}{Warning}
+\ifbool{marvel@french}{\renewcommand{\marvel@warning@title}{Avertissement}}{}
+\newbool{marvel@warning@numbered}
+\newlength{\marvel@warning@aftertitlevskip}
+\setlength{\marvel@warning@aftertitlevskip}{8pt}
+\ifbool{marvel@blackandwhite}{
+	\colorlet{marvel@warning@bordercolor}{black}
+	\colorlet{marvel@warning@titlecolor}{black}
+	\colorlet{marvel@warning@textcolor}{black}
+	\colorlet{marvel@warning@rulecolor}{black}
+	\colorlet{marvel@warning@titlebackgroundcolor}{white}
+	\colorlet{marvel@warning@backgroundcolor}{white}
+}
+{
+	\colorlet{marvel@warning@bordercolor}{red}
+	\colorlet{marvel@warning@titlecolor}{red}
+	\colorlet{marvel@warning@textcolor}{black}
+	\colorlet{marvel@warning@rulecolor}{red}
+	\colorlet{marvel@warning@titlebackgroundcolor}{red!50}
+	\colorlet{marvel@warning@backgroundcolor}{red!10}
+}
+\DeclareFixedFont{\marvel@warning@titlefont}{\encodingdefault}{cmr}{b}{n}{12pt}
+\DeclareFixedFont{\marvel@warning@titleextrafont}{\encodingdefault}{cmr}{b}{n}{10pt}
+\pgfdeclareimage[height=18pt]{marvel@warning@icon}{styles/openclipart/Anonymous_Architetto_--_Attenzione}
+\newcommand{\marvel@warning@icon}{\pgfuseimage{marvel@warning@icon}}
+
+\newcounter{marvel@goodpractices@counter}[chapter]
+\newcommand{\marvel@goodpractices@title}{Good practices}
+\ifbool{marvel@french}{\renewcommand{\marvel@goodpractices@title}{Bonnes pratiques}}{}
+\newbool{marvel@goodpractices@numbered}
+\newlength{\marvel@goodpractices@aftertitlevskip}
+\setlength{\marvel@goodpractices@aftertitlevskip}{8pt}
+\ifbool{marvel@blackandwhite}{
+	\colorlet{marvel@goodpractices@bordercolor}{black}
+	\colorlet{marvel@goodpractices@titlecolor}{black}
+	\colorlet{marvel@goodpractices@textcolor}{black}
+	\colorlet{marvel@goodpractices@rulecolor}{black}
+	\colorlet{marvel@goodpractices@titlebackgroundcolor}{white}
+	\colorlet{marvel@goodpractices@backgroundcolor}{white}
+}
+{
+	\colorlet{marvel@goodpractices@bordercolor}{green}
+	\colorlet{marvel@goodpractices@titlecolor}{DarkGreen}
+	\colorlet{marvel@goodpractices@textcolor}{black}
+	\colorlet{marvel@goodpractices@rulecolor}{green}
+	\colorlet{marvel@goodpractices@titlebackgroundcolor}{green!10}
+	\colorlet{marvel@goodpractices@backgroundcolor}{green!10}
+}
+\DeclareFixedFont{\marvel@goodpractices@titlefont}{\encodingdefault}{cmr}{b}{n}{12pt}
+\DeclareFixedFont{\marvel@goodpractices@titleextrafont}{\encodingdefault}{cmr}{b}{n}{10pt}
+\pgfdeclareimage[height=18pt]{marvel@goodpractices@icon}{styles/openclipart/jean_victor_balin_tick}
+\newcommand{\marvel@goodpractices@icon}{\pgfuseimage{marvel@goodpractices@icon}}
+
+\newcounter{marvel@commonerrors@counter}[chapter]
+\newcommand{\marvel@commonerrors@title}{Common errors}
+\ifbool{marvel@french}{\renewcommand{\marvel@commonerrors@title}{Erreurs fréquentes}}{}
+\newbool{marvel@commonerrors@numbered}
+\newlength{\marvel@commonerrors@aftertitlevskip}
+\setlength{\marvel@commonerrors@aftertitlevskip}{8pt}
+\ifbool{marvel@blackandwhite}{
+	\colorlet{marvel@commonerrors@bordercolor}{black}
+	\colorlet{marvel@commonerrors@titlecolor}{black}
+	\colorlet{marvel@commonerrors@textcolor}{black}
+	\colorlet{marvel@commonerrors@rulecolor}{black}
+	\colorlet{marvel@commonerrors@titlebackgroundcolor}{white}
+	\colorlet{marvel@commonerrors@backgroundcolor}{white}
+}
+{
+	\colorlet{marvel@commonerrors@bordercolor}{orange}
+	\colorlet{marvel@commonerrors@titlecolor}{orange}
+	\colorlet{marvel@commonerrors@textcolor}{black}
+	\colorlet{marvel@commonerrors@rulecolor}{orange}
+	\colorlet{marvel@commonerrors@titlebackgroundcolor}{orange!10}
+	\colorlet{marvel@commonerrors@backgroundcolor}{orange!10}
+}
+\DeclareFixedFont{\marvel@commonerrors@titlefont}{\encodingdefault}{cmr}{b}{n}{12pt}
+\DeclareFixedFont{\marvel@commonerrors@titleextrafont}{\encodingdefault}{cmr}{b}{n}{10pt}
+\pgfdeclareimage[height=18pt]{marvel@commonerrors@icon}{styles/openclipart/tasto_8_architetto_franc_01}
+\newcommand{\marvel@commonerrors@icon}{\pgfuseimage{marvel@commonerrors@icon}}
+
+\newcounter{marvel@landmark@counter}[chapter]
+\newcommand{\marvel@landmark@title}{Landmark}
+\ifbool{marvel@french}{\renewcommand{\marvel@landmark@title}{Point de repère}}{}
+\newbool{marvel@landmark@numbered}
+\newlength{\marvel@landmark@aftertitlevskip}
+\setlength{\marvel@landmark@aftertitlevskip}{8pt}
+\ifbool{marvel@blackandwhite}{
+	\colorlet{marvel@landmark@bordercolor}{black}
+	\colorlet{marvel@landmark@titlecolor}{black}
+	\colorlet{marvel@landmark@textcolor}{black}
+	\colorlet{marvel@landmark@rulecolor}{black}
+	\colorlet{marvel@landmark@titlebackgroundcolor}{white}
+	\colorlet{marvel@landmark@backgroundcolor}{white}
+}
+{
+	\colorlet{marvel@landmark@bordercolor}{Brown}
+	\colorlet{marvel@landmark@titlecolor}{Brown}
+	\colorlet{marvel@landmark@textcolor}{black}
+	\colorlet{marvel@landmark@rulecolor}{Brown}
+	\colorlet{marvel@landmark@titlebackgroundcolor}{Brown!10}
+	\colorlet{marvel@landmark@backgroundcolor}{Brown!10}
+}
+\DeclareFixedFont{\marvel@landmark@titlefont}{\encodingdefault}{cmr}{b}{n}{12pt}
+\DeclareFixedFont{\marvel@landmark@titleextrafont}{\encodingdefault}{cmr}{b}{n}{10pt}
+\pgfdeclareimage[height=18pt]{marvel@landmark@icon}{styles/openclipart/nicubunu_RPG_map_symbols_Crossroads_Sign}
+\newcommand{\marvel@landmark@icon}{\pgfuseimage{marvel@landmark@icon}}
+
+\newcounter{marvel@criticalerror@counter}[chapter]
+\newcommand{\marvel@criticalerror@title}{Critical errors}
+\ifbool{marvel@french}{\renewcommand{\marvel@criticalerror@title}{Erreurs fatales}}{}
+\newbool{marvel@criticalerror@numbered}
+\newlength{\marvel@criticalerror@aftertitlevskip}
+\setlength{\marvel@criticalerror@aftertitlevskip}{8pt}
+\ifbool{marvel@blackandwhite}{
+	\colorlet{marvel@criticalerror@bordercolor}{black}
+	\colorlet{marvel@criticalerror@titlecolor}{black}
+	\colorlet{marvel@criticalerror@textcolor}{black}
+	\colorlet{marvel@criticalerror@rulecolor}{black}
+	\colorlet{marvel@criticalerror@titlebackgroundcolor}{white}
+	\colorlet{marvel@criticalerror@backgroundcolor}{white}
+}
+{
+	\colorlet{marvel@criticalerror@bordercolor}{black}
+	\colorlet{marvel@criticalerror@titlecolor}{black}
+	\colorlet{marvel@criticalerror@textcolor}{black}
+	\colorlet{marvel@criticalerror@rulecolor}{black}
+	\colorlet{marvel@criticalerror@titlebackgroundcolor}{red!10}
+	\colorlet{marvel@criticalerror@backgroundcolor}{red!10}
+}
+\DeclareFixedFont{\marvel@criticalerror@titlefont}{\encodingdefault}{cmr}{b}{n}{12pt}
+\DeclareFixedFont{\marvel@criticalerror@titleextrafont}{\encodingdefault}{cmr}{b}{n}{10pt}
+\pgfdeclareimage[height=18pt]{marvel@criticalerror@icon}{styles/openclipart/ryanlerch_skull_and_crossbones}
+\newcommand{\marvel@criticalerror@icon}{\pgfuseimage{marvel@criticalerror@icon}}
+
+\newcounter{marvel@tipsandhints@counter}[chapter]
+\newcommand{\marvel@tipsandhints@title}{Tips and hints}
+\ifbool{marvel@french}{\renewcommand{\marvel@tipsandhints@title}{Trucs et actuces}}{}
+\newbool{marvel@tipsandhints@numbered}
+\newlength{\marvel@tipsandhints@aftertitlevskip}
+\setlength{\marvel@tipsandhints@aftertitlevskip}{8pt}
+\ifbool{marvel@blackandwhite}{
+	\colorlet{marvel@tipsandhints@bordercolor}{black}
+	\colorlet{marvel@tipsandhints@titlecolor}{black}
+	\colorlet{marvel@tipsandhints@textcolor}{black}
+	\colorlet{marvel@tipsandhints@rulecolor}{black}
+	\colorlet{marvel@tipsandhints@titlebackgroundcolor}{white}
+	\colorlet{marvel@tipsandhints@backgroundcolor}{white}
+}
+{
+	\colorlet{marvel@tipsandhints@bordercolor}{DarkGreen}
+	\colorlet{marvel@tipsandhints@titlecolor}{DarkGreen}
+	\colorlet{marvel@tipsandhints@textcolor}{black}
+	\colorlet{marvel@tipsandhints@rulecolor}{DarkGreen}
+	\colorlet{marvel@tipsandhints@titlebackgroundcolor}{DarkGreen!10}
+	\colorlet{marvel@tipsandhints@backgroundcolor}{DarkGreen!10}
+}
+\DeclareFixedFont{\marvel@tipsandhints@titlefont}{\encodingdefault}{cmr}{b}{n}{12pt}
+\DeclareFixedFont{\marvel@tipsandhints@titleextrafont}{\encodingdefault}{cmr}{b}{n}{10pt}
+\pgfdeclareimage[height=18pt]{marvel@tipsandhints@icon}{styles/openclipart/jean_victor_balin_unknown_green}
+\newcommand{\marvel@tipsandhints@icon}{\pgfuseimage{marvel@tipsandhints@icon}}
+
+\newcounter{marvel@exercice@counter}[chapter]
+\newcommand{\marvel@exercice@title}{Exercice}
+\ifbool{marvel@french}{\renewcommand{\marvel@exercice@title}{Exercice}}{}
+\newbool{marvel@exercice@numbered}
+\newlength{\marvel@exercice@aftertitlevskip}
+\setlength{\marvel@exercice@aftertitlevskip}{8pt}
+\ifbool{marvel@blackandwhite}{
+	\colorlet{marvel@exercice@bordercolor}{black}
+	\colorlet{marvel@exercice@titlecolor}{black}
+	\colorlet{marvel@exercice@textcolor}{black}
+	\colorlet{marvel@exercice@rulecolor}{black}
+	\colorlet{marvel@exercice@titlebackgroundcolor}{white}
+	\colorlet{marvel@exercice@backgroundcolor}{white}
+}
+{
+	\colorlet{marvel@exercice@bordercolor}{gray}
+	\colorlet{marvel@exercice@titlecolor}{gray}
+	\colorlet{marvel@exercice@textcolor}{black}
+	\colorlet{marvel@exercice@rulecolor}{gray}
+	\colorlet{marvel@exercice@titlebackgroundcolor}{gray!10}
+	\colorlet{marvel@exercice@backgroundcolor}{gray!10}
+}
+\DeclareFixedFont{\marvel@exercice@titlefont}{\encodingdefault}{cmr}{b}{n}{12pt}
+\DeclareFixedFont{\marvel@exercice@titleextrafont}{\encodingdefault}{cmr}{b}{n}{10pt}
+\pgfdeclareimage[height=18pt]{marvel@exercice@icon}{styles/openclipart/AJ_Computer}
+\newcommand{\marvel@exercice@icon}{\pgfuseimage{marvel@exercice@icon}}
+
+\newcounter{marvel@definition@counter}[chapter]
+\newcommand{\marvel@definition@title}{Definition}
+\ifbool{marvel@french}{\renewcommand{\marvel@definition@title}{Définition}}{}
+\newbool{marvel@definition@numbered}
+\newlength{\marvel@definition@aftertitlevskip}
+\setlength{\marvel@definition@aftertitlevskip}{8pt}
+\ifbool{marvel@blackandwhite}{
+	\colorlet{marvel@definition@bordercolor}{black}
+	\colorlet{marvel@definition@titlecolor}{black}
+	\colorlet{marvel@definition@textcolor}{black}
+	\colorlet{marvel@definition@rulecolor}{black}
+	\colorlet{marvel@definition@titlebackgroundcolor}{white}
+	\colorlet{marvel@definition@backgroundcolor}{white}
+}
+{
+	\colorlet{marvel@definition@bordercolor}{black}
+	\colorlet{marvel@definition@titlecolor}{black}
+	\colorlet{marvel@definition@textcolor}{black}
+	\colorlet{marvel@definition@rulecolor}{black}
+	\colorlet{marvel@definition@titlebackgroundcolor}{white}
+	\colorlet{marvel@definition@backgroundcolor}{white}
+}
+\DeclareFixedFont{\marvel@definition@titlefont}{\encodingdefault}{cmr}{b}{n}{12pt}
+\DeclareFixedFont{\marvel@definition@titleextrafont}{\encodingdefault}{cmr}{b}{n}{10pt}
+\pgfdeclareimage[height=18pt]{marvel@definition@icon}{styles/openclipart/attach}
+\newcommand{\marvel@definition@icon}{\pgfuseimage{marvel@definition@icon}}
+
+\newcounter{marvel@theorem@counter}[chapter]
+\newcommand{\marvel@theorem@title}{Theorem}
+\ifbool{marvel@french}{\renewcommand{\marvel@theorem@title}{Théorème}}{}
+\newbool{marvel@theorem@numbered}
+\newlength{\marvel@theorem@aftertitlevskip}
+\setlength{\marvel@theorem@aftertitlevskip}{8pt}
+\ifbool{marvel@blackandwhite}{
+	\colorlet{marvel@theorem@bordercolor}{black}
+	\colorlet{marvel@theorem@titlecolor}{black}
+	\colorlet{marvel@theorem@textcolor}{black}
+	\colorlet{marvel@theorem@rulecolor}{black}
+	\colorlet{marvel@theorem@titlebackgroundcolor}{white}
+	\colorlet{marvel@theorem@backgroundcolor}{white}
+}
+{
+	\colorlet{marvel@theorem@bordercolor}{black}
+	\colorlet{marvel@theorem@titlecolor}{black}
+	\colorlet{marvel@theorem@textcolor}{black}
+	\colorlet{marvel@theorem@rulecolor}{black}
+	\colorlet{marvel@theorem@titlebackgroundcolor}{white}
+	\colorlet{marvel@theorem@backgroundcolor}{white}
+}
+\DeclareFixedFont{\marvel@theorem@titlefont}{\encodingdefault}{cmr}{b}{n}{12pt}
+\DeclareFixedFont{\marvel@theorem@titleextrafont}{\encodingdefault}{cmr}{b}{n}{10pt}
+\pgfdeclareimage[height=18pt]{marvel@theorem@icon}{styles/openclipart/attach}
+\newcommand{\marvel@theorem@icon}{\pgfuseimage{marvel@theorem@icon}}
+
+\newcounter{marvel@essential@counter}[chapter]
+\newcommand{\marvel@essential@title}{The essential}
+\ifbool{marvel@french}{\renewcommand{\marvel@essential@title}{L'éssentiel à retenir}}{}
+\newbool{marvel@essential@numbered}
+\newlength{\marvel@essential@aftertitlevskip}
+\setlength{\marvel@essential@aftertitlevskip}{8pt}
+\ifbool{marvel@blackandwhite}{
+	\colorlet{marvel@essential@bordercolor}{black}
+	\colorlet{marvel@essential@titlecolor}{black}
+	\colorlet{marvel@essential@textcolor}{black}
+	\colorlet{marvel@essential@rulecolor}{black}
+	\colorlet{marvel@essential@titlebackgroundcolor}{white}
+	\colorlet{marvel@essential@backgroundcolor}{white}
+}
+{
+	\colorlet{marvel@essential@bordercolor}{black}
+	\colorlet{marvel@essential@titlecolor}{black}
+	\colorlet{marvel@essential@textcolor}{black}
+	\colorlet{marvel@essential@rulecolor}{black}
+	\colorlet{marvel@essential@titlebackgroundcolor}{white}
+	\colorlet{marvel@essential@backgroundcolor}{white}
+}
+\DeclareFixedFont{\marvel@essential@titlefont}{\encodingdefault}{cmr}{b}{n}{12pt}
+\DeclareFixedFont{\marvel@essential@titleextrafont}{\encodingdefault}{cmr}{b}{n}{10pt}
+\pgfdeclareimage[height=18pt]{marvel@essential@icon}{styles/openclipart/jean_victor_balin_tick}
+\newcommand{\marvel@essential@icon}{\pgfuseimage{marvel@essential@icon}}
+
+\newcounter{marvel@correction@counter}[chapter]
+\def\marvel@correction@title{}
+%\ifbool{marvel@french}{\renewcommand{\marvel@correction@title}{}}{}
+\newbool{marvel@correction@numbered}
+\newlength{\marvel@correction@aftertitlevskip}
+\setlength{\marvel@correction@aftertitlevskip}{8pt}
+\ifbool{marvel@blackandwhite}{
+	\colorlet{marvel@correction@bordercolor}{black}
+	\colorlet{marvel@correction@titlecolor}{black}
+	\colorlet{marvel@correction@textcolor}{black}
+	\colorlet{marvel@correction@rulecolor}{black}
+	\colorlet{marvel@correction@titlebackgroundcolor}{white}
+	\colorlet{marvel@correction@backgroundcolor}{gray!20}
+}
+{
+	\colorlet{marvel@correction@bordercolor}{black}
+	\colorlet{marvel@correction@titlecolor}{black}
+	\colorlet{marvel@correction@textcolor}{black}
+	\colorlet{marvel@correction@rulecolor}{black}
+	\colorlet{marvel@correction@titlebackgroundcolor}{white}
+	\colorlet{marvel@correction@backgroundcolor}{gray!20}
+}
+\DeclareFixedFont{\marvel@correction@titlefont}{\encodingdefault}{cmr}{b}{n}{12pt}
+\DeclareFixedFont{\marvel@correction@titleextrafont}{\encodingdefault}{cmr}{b}{n}{10pt}
+\pgfdeclareimage[height=18pt]{marvel@correction@icon}{styles/openclipart/jean_victor_balin_tick}
+\newcommand{\marvel@correction@icon}{}%\pgfuseimage{marvel@correction@icon}}
+
+\newenvironment{warning}{\begin{marvel@specialblock}{warning}}{\end{marvel@specialblock}}
+\newenvironment{goodpractices}{\begin{marvel@specialblock}{goodpractices}}{\end{marvel@specialblock}}
+\newenvironment{commonerrors}{\begin{marvel@specialblock}{commonerrors}}{\end{marvel@specialblock}}
+\newenvironment{landmark}{\begin{marvel@specialblock}{landmark}}{\end{marvel@specialblock}}
+\newenvironment{criticalerror}{\begin{marvel@specialblock}{criticalerror}}{\end{marvel@specialblock}}
+\newenvironment{tipsandhints}{\begin{marvel@specialblock}{tipsandhints}}{\end{marvel@specialblock}}
+\newenvironment{exercice}{\begin{marvel@specialblock}{exercice}}{\end{marvel@specialblock}}
+\renewenvironment{definition}{\begin{marvel@specialblock}{definition}}{\end{marvel@specialblock}}
+\renewenvironment{theorem}{\begin{marvel@specialblock}{theorem}}{\end{marvel@specialblock}}
+\newenvironment{essential}{\begin{marvel@specialblock}{essential}}{\end{marvel@specialblock}}
+
+\ifbool{marvel@correction}{%
+	\newenvironment{correction}{\begin{marvel@specialblock}{correction}}{\end{marvel@specialblock}}
+}%
+{
+	\newenvironment{correction}%
+	 	{\begin{lrbox}{\marvel@correctionbox}\begin{minipage}[l]{\linewidth}\it}%
+  		{\end{minipage}\end{lrbox}}%	
+}
+
+
+\ifbool{marvel@numberedspecialblock}{
+    \setbool{marvel@warning@numbered}{true}
+    \setbool{marvel@goodpractices@numbered}{true}
+    \setbool{marvel@commonerrors@numbered}{true}
+    \setbool{marvel@landmark@numbered}{true}
+    \setbool{marvel@criticalerror@numbered}{true}
+    \setbool{marvel@tipsandhints@numbered}{true}
+    \setbool{marvel@exercice@numbered}{true}
+    \setbool{marvel@definition@numbered}{true}
+    \setbool{marvel@theorem@numbered}{true}
+}{}

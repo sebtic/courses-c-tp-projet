@@ -1,0 +1,77 @@
+
+\DeclareFixedFont{\marvel@font@titlepage@institute}{\encodingdefault}{cmr}{bx}{n}{14pt}
+\DeclareFixedFont{\marvel@font@titlepage@title}{\encodingdefault}{cmr}{bx}{n}{24.88pt}
+\DeclareFixedFont{\marvel@font@titlepage@subtitle}{\encodingdefault}{cmr}{bx}{n}{17.28pt}
+\DeclareFixedFont{\marvel@font@titlepage@date}{\encodingdefault}{cmr}{bx}{n}{17.28pt}
+\DeclareFixedFont{\marvel@font@titlepage@author}{\encodingdefault}{cmr}{bx}{n}{17.28pt}
+\DeclareFixedFont{\marvel@font@titlepage@authorextra}{\encodingdefault}{cmr}{m}{n}{10pt}
+\DeclareFixedFont{\marvel@font@titlepage@notice}{\encodingdefault}{cmr}{m}{n}{10pt}
+
+
+\ifbool{marvel@blackandwhite}{
+    \colorlet{marvel@color@institute}{black}
+    \colorlet{marvel@color@title}{black}
+    \colorlet{marvel@color@subtitle}{black}
+    \colorlet{marvel@color@date}{black}
+    \colorlet{marvel@color@author}{black}
+    \colorlet{marvel@color@authorextra}{black}
+    \colorlet{marvel@color@notice}{black}
+}{
+    \colorlet{marvel@color@institute}{black}
+    \colorlet{marvel@color@title}{NavyBlue}
+    \colorlet{marvel@color@subtitle}{NavyBlue}
+    \colorlet{marvel@color@date}{NavyBlue}
+    \colorlet{marvel@color@author}{black}
+    \colorlet{marvel@color@authorextra}{NavyBlue}
+    \colorlet{marvel@color@notice}{black}
+}
+
+\renewcommand{\maketitle}{%
+    \begin{titlepage}%          
+        \noindent\begin{minipage}{\hsize}
+            \marvel@font@titlepage@institute\color{marvel@color@institute}\marvel@titlepageinstitute%
+        \end{minipage}      
+        \vfill
+        \noindent\begin{minipage}{\hsize}
+            \begin{center}
+                \marvel@titlepagelogo
+            \end{center}
+        \end{minipage}
+        \vfill
+        \noindent\begin{minipage}{\hsize}
+            \begin{center}
+                \marvel@font@titlepage@title\color{marvel@color@title}\marvel@title\par%
+                \ifblank{\marvel@subtitle}{}{%
+                	\marvel@font@titlepage@subtitle\color{marvel@color@subtitle}\marvel@subtitle\par%
+                }
+                \ifblank{\marvel@date}{}{%
+                	\vspace{1cm}
+                	\marvel@font@titlepage@date\color{marvel@color@date}\marvel@date\par%
+                }
+            \end{center}
+        \end{minipage}
+        \vfill
+        \noindent\begin{minipage}{\hsize}
+            \begin{center}
+                \marvel@font@titlepage@author\color{marvel@color@author}\marvel@author
+                \ifstrempty{\marvel@titlepageauthorextra}{
+                }
+                {
+                    \\[0.2cm]
+                    \marvel@font@titlepage@authorextra\color{marvel@color@authorextra}\marvel@titlepageauthorextra
+                }
+            \end{center}
+        \end{minipage}
+        \vfill
+        \noindent\begin{minipage}{\hsize}
+            \noindent\marvel@font@titlepage@notice\color{marvel@color@notice}\marvel@titlepagenotice
+        \end{minipage}
+    \end{titlepage}
+    
+    \hypersetup{pdfauthor={\marvel@author},
+        pdftitle={\marvel@title},
+        pdfsubject={\marvel@title},
+        %pdfkeywords={},
+        pdfproducer={\marvel@author},
+        pdfcreator={pdflatex, \LaTeX}]{hyperref}}
+}

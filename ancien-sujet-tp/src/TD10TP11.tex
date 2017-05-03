@@ -1,0 +1,454 @@
+\chapter{TD10\&TP11 : Manipulation d'un document}
+
+Cette série d'exercices devrait vous permettre de compléter par vous même les fonctions de \ccode{DocumentUtil.c}, \ccode{DocumentRowList.c} et  \ccode{Document.c}.
+
+\section{Fonctions génériques}
+
+Pour les deux fonctions suivantes, on considère des fichiers binaires.
+
+Ecrire la fonction \ccode{void writeString(const char * str, FILE * file)} qui écrit dans un fichier binaire la chaîne de caractères fournie en paramètre. La longueur de la chaîne est quelconque.
+
+\begin{csourcecorrection}
+void writeString(const char * str, FILE * file) {
+    size_t len;
+    len = stringLength(str);
+    if (fwrite(&len, sizeof(len), 1, file) != 1)
+        fatalError("writeString");
+    if (len > 0)
+        if (fwrite(str, len, 1, file) != 1)
+            fatalError("writeString");
+}
+\end{csourcecorrection}
+
+
+Ecrire la fonction \ccode{char * readString(FILE * file)} qui lit dans un fichier binaire une chaîne de caractères précédemment écrite via la fonction \ccode{writeString}. La chaîne de caractères retournée est allouée sur le tas.
+
+\begin{csourcecorrection}
+char * readString(FILE * file) {
+    size_t len;
+    char * result;
+
+    if (fread(&len, sizeof(len), 1, file) != 1)
+        fatalError("readString");
+    result = (char*) malloc(len + 1);
+    if (len > 0)
+        if (fread(result, len, 1, file) != 1)
+            fatalError("readString");
+    result[len] = '\0';
+    return result;
+}
+\end{csourcecorrection}
+
+\section{La liste des produits du document}
+
+La liste des produits d'un document est stockée sous la forme d'une liste chainée simple. Pour cela, on vous fournit la structure de données suivante :
+\begin{csource}
+/** Structure representing a row in a document (as a cell in a simple linked list) */
+typedef struct _DocumentRow {
+    char * code /** The code */;
+    char * designation /** The designation */;
+    double quantity /** The quantity */;
+    char * unity /** The unity */;
+    double basePrice /** The base price */;
+    double sellingPrice /** The selling price */;
+    double discount /** The discount */;
+    double rateOfVAT /** The rate of VAT */;
+    struct _DocumentRow * next /** The pointer to the next row */;
+} DocumentRow;
+\end{csource}
+
+Lorsque plusieurs cellules sont chainées en mémoire, on obtient une organisation telle que :
+\begin{center}
+\pgfimage[width=0.8\textwidth]{listev2}
+\end{center} 
+
+
+\subsection{Manipulation des cellules}
+
+\subsubsection{Initialisation d'une cellule de la liste}
+
+Ecrire la fonction \ccode{void DocumentRow_init(DocumentRow * row)} qui initialise tous les champs d'une cellule à des valeurs \og raisonnable \fg{} de manière à représenter une ligne de produit vide.
+
+\begin{csourcecorrection}
+void DocumentRow_init(DocumentRow * row) {
+    row->code = duplicateString("");
+    row->designation = duplicateString("");
+    row->quantity = 0;
+    row->unity = duplicateString("");
+    row->basePrice = 0;
+    row->sellingPrice = 0;
+    row->discount = 0;
+    row->rateOfVAT = 0;
+    row->next = NULL;
+}
+\end{csourcecorrection}
+
+
+\subsubsection{Finalisation d'une cellule}
+
+Ecrire la fonction \ccode{void DocumentRow_finalize(DocumentRow * row)} qui finalise une cellule en libérant toute la mémoire non nécessaire à la cellule.
+
+\begin{csourcecorrection}
+void DocumentRow_finalize(DocumentRow * row) {
+    free(row->code);
+    free(row->designation);
+    free(row->unity);
+}
+\end{csourcecorrection}
+
+\subsubsection{Allocation sur le tas et initialisation d'une cellule}
+
+Ecrire la fonction \ccode{DocumentRow * DocumentRow_create( void )} qui alloue une cellule sur le tas, l'initialise et la retourne.
+
+\begin{csourcecorrection}
+DocumentRow * DocumentRow_create(void) {
+    DocumentRow * row;
+
+    row = (DocumentRow *) malloc(sizeof(DocumentRow));
+    if (row == NULL)
+        fatalError("DocumentRow_Create");
+    DocumentRow_init(row);
+    return row;
+}
+\end{csourcecorrection}
+
+\subsubsection{Destruction d'une cellule allouée sur le tas}
+
+Ecrire la fonction \ccode{void DocumentRow_destroy(DocumentRow * row)} qui desalloue une cellule précédement allouée par \ccode{DocumentRow_create}.
+
+\begin{csourcecorrection}
+void DocumentRow_destroy(DocumentRow * row) {
+    DocumentRow_finalize(row);
+    free(row);
+}
+\end{csourcecorrection}
+
+\subsubsection{Ecriture d'une cellule dans un fichier binaire}
+
+En utilisant la fonction \ccode{writeString}, écrire la fonction \ccode{void DocumentRow_writeRow(DocumentRow * row, FILE * file)} qui écrit le contenu d'une cellule dans un fichier binaire.
+
+\begin{csourcecorrection}
+void DocumentRow_writeRow(DocumentRow * row, FILE * file) {
+    writeString(row->code, file);
+    writeString(row->designation, file);
+    if (fwrite(&row->quantity, sizeof(row->quantity), 1, file) != 1)
+        fatalError("writeRow");
+    writeString(row->unity, file);
+    if (fwrite(&row->basePrice, sizeof(row->basePrice), 1, file) != 1)
+        fatalError("writeRow");
+    if (fwrite(&row->sellingPrice, sizeof(row->sellingPrice), 1, file) != 1)
+        fatalError("writeRow");
+    if (fwrite(&row->discount, sizeof(row->discount), 1, file) != 1)
+        fatalError("writeRow");
+    if (fwrite(&row->rateOfVAT, sizeof(row->rateOfVAT), 1, file) != 1)
+        fatalError("writeRow");
+}
+\end{csourcecorrection}
+
+\subsubsection{Lecture d'une cellule à partir d'un fichier binaire}
+
+En utilisant la fonction \ccode{readString}, écrire la fonction \ccode{DocumentRow * DocumentRow_readRow(FILE * fichier)} qui retourne une cellule allouée sur le tas dont le contenu est lu à partir du fichier binaire.
+
+\begin{csourcecorrection}
+DocumentRow * DocumentRow_readRow(FILE * fichier) {
+    DocumentRow * row;
+
+    row = DocumentRow_create();
+    free(row->code);
+    row->code = readString(fichier);
+    free(row->designation);
+    row->designation = readString(fichier);
+    if (fread(&row->quantity, sizeof(row->quantity), 1, fichier) != 1)
+        fatalError("readRow");
+    free(row->unity);
+    row->unity = readString(fichier);
+    if (fread(&row->basePrice, sizeof(row->basePrice), 1, fichier) != 1)
+        fatalError("readRow");
+    if (fread(&row->sellingPrice, sizeof(row->sellingPrice), 1, fichier) != 1)
+        fatalError("readRow");
+    if (fread(&row->discount, sizeof(row->discount), 1, fichier) != 1)
+        fatalError("readRow");
+    if (fread(&row->rateOfVAT, sizeof(row->rateOfVAT), 1, fichier) != 1)
+        fatalError("readRow");
+    return row;
+}
+\end{csourcecorrection}
+
+\subsection{Manipulation de la liste}
+
+\subsubsection{Initialisation d'une liste}
+
+Une liste chainée est assimilable à une tête de liste et aux cellules composants la liste. Ecrire la fonction \ccode{void DocumentRowList_init(DocumentRow ** list)} qui initialise une liste comme étant vide.
+
+\begin{csourcecorrection}
+/** Initialize a list of rows
+ * @param list the address of the pointer on the first cell of the list
+ */
+void DocumentRowList_init(DocumentRow ** list) {
+    *list = NULL;
+}
+\end{csourcecorrection}
+
+\subsubsection{Destruction de liste}
+
+Ecrire la fonction \ccode{void DocumentRowList_finalize(DocumentRow ** list)} qui détuit une liste en détruisant les cellules de la liste. A la fin de la fonction, la liste doit être une liste valide mais vide.
+
+\begin{csourcecorrection}
+void DocumentRowList_finalize(DocumentRow ** list) {
+    while (*list != NULL) {
+        DocumentRowList_removeRow(list, *list);
+    }
+}
+\end{csourcecorrection}
+
+
+\subsubsection{Accès au n-ième élément de la liste}
+
+Ecrire la fonction \ccode{DocumentRow * DocumentRowList_get(DocumentRow * list, int rowIndex)} qui re\-tour\-ne un pointeur sur le \ccode{rowIndex}-ième élément de la liste. Si cet élément n'existe pas, la liste renvoie \ccode{NULL}.
+
+\begin{csourcecorrection}
+DocumentRow * DocumentRowList_get(DocumentRow * list, int rowIndex) {
+    DocumentRow * cur;
+    int i;
+
+    cur = list;
+    i = 0;
+    
+    if (rowIndex < 0) 
+        return NULL;
+
+    while (cur != NULL && i != rowIndex) {
+        cur = cur->next;
+        i++;
+    }
+    return cur;
+}
+\end{csourcecorrection}
+
+\subsubsection{Nombre d'éléments d'une liste}
+
+Ecrire la fonction \ccode{int DocumentRowList_getRowCount(DocumentRow * list)} qui retoune le nombre d'éléments d'une liste.
+
+\begin{csourcecorrection}
+int DocumentRowList_getRowCount(DocumentRow * list) {
+    int count = 0;
+
+    while (list != NULL) {
+        count++;
+        list = list->next;
+    }
+    return count;
+}
+\end{csourcecorrection}
+
+\subsubsection{Ajout en fin de liste}
+
+Ecrire la fonction \ccode{void DocumentRowList_pushBack(DocumentRow ** list, DocumentRow * row)} qui a\-jou\-te une cellule à la fin de la liste.
+
+\begin{csourcecorrection}
+void DocumentRowList_pushBack(DocumentRow ** list, DocumentRow * row) {
+    if (*list == NULL)
+        *list = row;
+    else {
+        DocumentRow * cur = *list;
+        while (cur->next != NULL)
+            cur = cur->next;
+        cur->next = row;
+    }
+}
+\end{csourcecorrection}
+
+\subsubsection{Insertion après une cellule}
+
+Ecrire la fonction \ccode{DocumentRowList_insertAfter} qui insère une cellule après la position indiquée dans une liste.
+\begin{csource}
+void DocumentRowList_insertAfter(DocumentRow ** list, DocumentRow * position, DocumentRow * row);
+\end{csource}
+
+\begin{csourcecorrection}
+void DocumentRowList_insertAfter(DocumentRow ** UNUSED(list), DocumentRow * position,
+        DocumentRow * row) {
+    row->next = position->next;
+    position->next = row;
+}
+\end{csourcecorrection}
+
+\subsubsection{Insertion avant une cellule}
+
+Ecrire la fonction \ccode{DocumentRowList_insertBefore} qui insère une cellule avant la position indiquée dans une liste.
+\begin{csource}
+void DocumentRowList_insertBefore(DocumentRow ** list, DocumentRow* position, DocumentRow* row);
+\end{csource}
+
+\begin{csourcecorrection}
+void DocumentRowList_insertBefore(DocumentRow ** list, DocumentRow * position, DocumentRow * row) {
+    if (position != NULL) {
+        if (position == *list) {
+            row->next = position;
+            *list = row;
+        } else {
+            DocumentRow * previous = *list;
+            while (previous != NULL && previous->next != position)
+                previous = previous->next;
+            if (previous != NULL) {
+                row->next = previous->next;
+                previous->next = row;
+            }
+        }
+    }
+}
+\end{csourcecorrection}
+
+
+\subsubsection{Suppression d'une cellule}
+
+Ecrire la fonction \ccode{void DocumentRowList_removeRow(DocumentRow ** list, DocumentRow * position)} qui supprime la cellule indiquée d'une liste.
+
+\begin{csourcecorrection}
+void DocumentRowList_removeRow(DocumentRow ** list, DocumentRow * position) {
+    if (*list == position) {
+        *list = position->next;
+        DocumentRow_destroy(position);
+    } else {
+        DocumentRow * previous = *list;
+        while (previous != NULL && previous->next != position)
+            previous = previous->next;
+        if (previous != NULL)
+            previous->next = position->next;
+        DocumentRow_destroy(position);
+    }
+}
+\end{csourcecorrection}
+
+\section{Le document}
+
+Un document est défini grâce aux structures de données suivantes:
+\begin{csource}
+/** Enumeration defining the type of a document */
+typedef enum {
+    QUOTATION /**< It's a quotation */,
+    BILL /**< It's a bill */
+} TypeDocument;
+
+/** Structure representing a document */
+typedef struct {
+    CustomerRecord customer /** The customer */;
+    char * editDate /** The last edit data */;
+    char * expiryDate /** The peremption date */;
+    char * docNumber /** The document number */;
+    char * object /** The object of the document */;
+    char * operator /** The last operator */;
+    DocumentRow * rows /** The rows */;
+    TypeDocument typeDocument /** The type of document */;
+} Document;
+\end{csource}
+
+\subsection{Initialisation}
+
+Ecrire la fonction \ccode{void Document_init(Document * document)} qui initialise un document  de manière à ce qu'il soit vierge.
+
+\begin{csourcecorrection}
+void Document_init(Document * document) {
+    CustomerRecord_init(&document->customer);
+    document->editDate = duplicateString("");
+    document->expiryDate = duplicateString("");
+    document->docNumber = duplicateString("");
+    document->object = duplicateString("");
+    document->operator = duplicateString("");
+    DocumentRowList_init(&document->rows);
+    document->typeDocument = QUOTATION;
+}
+\end{csourcecorrection}
+
+\subsection{Finalisation}
+
+Ecrire la fonction \ccode{void Document_finalize(Document * document)} qui finalise un document en libérant les éventuelles zones mémoires allouées.
+
+\begin{csourcecorrection}
+void Document_finalize(Document * document) {
+    CustomerRecord_finalize(&document->customer);
+    free(document->editDate);
+    free(document->expiryDate);
+    free(document->docNumber);
+    free(document->object);
+    free(document->operator);
+    DocumentRowList_finalize(&document->rows);
+}
+\end{csourcecorrection}
+
+
+\subsection{Ecriture dans un fichier}
+
+Ecrire la fonction \ccode{void Document_saveToFile(Document * document, const char * filename)} qui écrit le con\-te\-nu d'un document dans un fichier binaire. Vous devez au maximum utiliser les fonctions définies précédement.
+
+\begin{csourcecorrection}
+void Document_saveToFile(Document * document, const char * filename) {
+    DocumentRow * cur;
+    int count;
+    FILE * fichier;
+
+    count = DocumentRowList_getRowCount(document->rows);
+    fichier = fopen(filename, "wb");
+
+    CustomerRecord_write(&document->customer, fichier);
+    writeString(document->docNumber, fichier);
+    writeString(document->editDate, fichier);
+    writeString(document->object, fichier);
+    writeString(document->operator, fichier);
+    writeString(document->expiryDate, fichier);
+
+    if (fwrite(&document->typeDocument, sizeof(document->typeDocument), 1, fichier) != 1)
+        fatalError("Document_SaveToFile");
+
+    if (fwrite(&count, sizeof(count), 1, fichier) != 1)
+        fatalError("Document_SaveToFile");
+
+    cur = document->rows;
+    while (cur != NULL) {
+        DocumentRow_writeRow(cur, fichier);
+        cur = cur->next;
+    }
+
+    fclose(fichier);
+}
+\end{csourcecorrection}
+
+\subsection{Lecture à partir d'un fichier binaire}
+
+Ecrire la fonction \ccode{void Document_loadFromFile(Document * document, const char * filename)} qui lit le con\-te\-nu d'un document à partir d'un fichier. Le document, fournis en paramètre, à remplir a été précédemment initialisé par la fonction \ccode{Document_init}.
+
+\begin{csourcecorrection}
+void Document_loadFromFile(Document * document, const char * filename) {
+    int count, i;
+    FILE * fichier;
+
+    fichier = fopen(filename, "rb");
+    if (fopen == NULL)
+        fatalError("Echec ouverture fichier");
+
+    CustomerRecord_read(&document->customer, fichier);
+    free(document->docNumber);
+    document->docNumber = readString(fichier);
+    free(document->editDate);
+    document->editDate = readString(fichier);
+    free(document->object);
+    document->object = readString(fichier);
+    free(document->operator);
+    document->operator = readString(fichier);
+    free(document->expiryDate);
+    document->expiryDate = readString(fichier);
+
+    if (fread(&document->typeDocument, sizeof(document->typeDocument), 1, fichier) != 1)
+        fatalError("Document_LoadFromFile");
+
+    if (fread(&count, sizeof(count), 1, fichier) != 1)
+        fatalError("Document_LoadFromFile");
+
+    DocumentRowList_finalize(&document->rows);
+    for (i = 0; i < count; ++i)
+        DocumentRowList_pushBack(&document->rows, DocumentRow_readRow(fichier));
+
+    fclose(fichier);
+}
+\end{csourcecorrection}
+

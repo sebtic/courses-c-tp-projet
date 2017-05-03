@@ -1,0 +1,559 @@
+\chapter{TD12\&TP13 : Aperçu avant impression}
+
+Cette série d'exercices devrait vous permettre de compléter par vous même les fonctions de \ccode{Dictionary.c} et  \ccode{PrintFormat.c}.
+
+\section{Principes}
+
+\subsection{Objectif}
+
+L'objectif de ces exercices est de mettre en place un système de mise en forme de documents pour l'impression (non implémentée). Le système consiste, à partir d'un modèle de document et d'informations, à générer un document texte. Un modèle est donné au format texte et contient des balises permettant d'indiquer les informations à insérer et les éventuels traitements à effectuer dessus. Le modèle sera stocké dans une structure de données \ccode{PrintFormat} tandis que les informations seront stockées dans des dictionnaires de données représentés par la structure \ccode{Dictionary}.
+
+\subsection{Dictionnaire et modèles}
+
+Un dictionnaire contient un ensemble de couple nom de variable/valeur. Les valeurs peuvent être des chaînes de caractères ou des réels de type \ccode{double}.
+
+Les balises dans un modèle sont délimités par le caractère \%. A l'intérieur d'une balise, on trouve obligatoirement un nom de variable (insensible à la casse) et d'éventuelles modifications à apporter à la valeur substituée entre accolades. Les modifications prévues sont limitées et dépendent du type de la variable :
+\begin{itemize}
+  \item Si la variable est une chaîne de caractères, les modificateurs possibles sont :
+  	\begin{itemize}
+	  \item \ccode{case} pour modifier la casse : \ccode{U} ou \ccode{u} pour transformer en majuscule, une autre valeur pour transformer en minuscule;
+	  \item \ccode{min} pour spécifier la longeur minimale de la chaîne de substitution. Si la chaîne à substituer est trop courte, des espaces sont ajoutés à la fin;
+	  \item \ccode{max} pour spécifier la longuer maximale de la chaîne de substitution. Si la chaîne à substituer est trop longue, elle est tronquée.
+	\end{itemize}
+  \item Si la variable est un nombre réel, les modificateurs possibles sont :
+    \begin{itemize}
+	  \item \ccode{precision} pour spécifier la précision du nombre réel. Il s'agit du nombre de chiffre après la virgule. Si la précision est nulle, le séparateur de décimale ne doit pas faire partie de la chaîne de substitution.
+	  \item \ccode{min} pour spécifier la largeur minimale de la chaîne de substitution. Si la chaîne à substituer est trop courte, des espaces sont ajoutés au début.
+	\end{itemize}
+\end{itemize}
+Si plusieurs modificateurs identiques sont présents pour une substitution, on supposera que seul la première occurrence du modificateur est prise en compte. Si deux caractères \% se suivent dans le texte alors ils sont remplacés par un seul \% (séquence d'échappement).
+
+\subsection{Exemple}
+
+Supposons que le dictionnaire suivant soit utilisée pour formatter un modèle :
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+Nom&Type&Valeur\\
+\hline
+var1&nombre&10.2\\
+\hline
+var2&chaîne&"abcDef"\\
+\hline
+\end{tabular}
+\end{center}
+
+Après formattage, on doit obtenir les résultats suivants :
+\begin{csource}
+Chaine de format	                        Chaine de substitution
+"%%"                                        "%"
+"%VAR1{precision=0}%"                       "10"
+"%VAR1{precision=0}% %VAR1{precision=0}%"   "10 10"
+"%VAR1{precision=2}%"                       "10,20"
+"%VAR1{precision=2,min=10}%"                "     10,20"
+"%VAR2%"                                    "abcDef"
+"%VAR2{max=3}%"                             "abc"
+"%VAR2{max=10}%"                            "abcDef"
+"%VAR2{min=8}%"                             "abcDef  "
+"%VAR2{case=U}%"                            "ABCDEF"
+"%VAR2{case=l}%"                            "abcdef"
+"%VAR2{case=U,max=4}%"                      "ABCD"
+\end{csource}
+
+\subsection{Strutures de données}
+
+Un dictionnaire est défini par les structures suivantes :
+\begin{csource}
+
+/** Enumeration defining the type of the doctionary entries */
+typedef enum {
+    UNDEFINED_ENTRY /* It's undefined */,
+    NUMBER_ENTRY /** It's a number */,
+    STRING_ENTRY /** It's a string */
+} DictionaryEntryType;
+
+/** Structure representing an entry in the dictionary */
+typedef struct {
+    /** The type of entry */
+    DictionaryEntryType type;
+    /** The name of the entry */
+    char * name;
+    /** The union which store the value of the entry */
+    union {
+        /** The value of the entry when it's a string */
+        char * stringValue;
+        /** The value of the entry when it's a real number */
+        double numberValue;
+    } value;
+} DictionaryEntry;
+
+/** Structure representing a dictionary */
+typedef struct _Dictionary {
+    /** The number of entries of the dictionary */
+    int count;
+    /** The table of entries */
+    DictionaryEntry * entries;
+} Dictionary;
+\end{csource}
+Un dictionnaire est donc assimilable à un tableau dynamique.
+
+Un modèle est défini par la structure suivante :
+\begin{csource}
+
+/** Structure holding the three format strings defining a model */
+typedef struct _PrintFormat {
+    /** The name of the model */
+    char * name;
+    /** The header format */
+    char * header;
+    /** The row format */
+    char * row;
+    /** The footer format */
+    char * footer;
+} PrintFormat;
+\end{csource}
+Chaque modèle est décomposé en trois parties :
+\begin{itemize}
+  \item le modèle de l'entête : utilisée pour formatter le début du document;
+  \item le modèle de ligne : utilisée pour formatter une ligne produit du document;
+  \item le modèle de pied de page : utilisée pour formatter la fin du document.
+\end{itemize}
+Ce modèle est simplifié et ne gère donc pas la notion délicate de découpage en pages.
+
+\section{Manipulation du dictionnaire}
+
+\subsection{Création d'un dictionnaire}
+
+Ecrire la fonction \ccode{Dictionary * Dictionary_create(void)} qui crée sur le tas un nouveau dictionnaire.
+
+\begin{csourcecorrection}
+Dictionary * Dictionary_create(void) {
+    Dictionary * dictionary;
+
+    REGISTRY_USINGFUNCTION;
+
+    dictionary = (Dictionary*) malloc(sizeof(Dictionary));
+    if (dictionary == NULL)
+        fatalError("Dictionary_Create");
+    dictionary->count = 0;
+    dictionary->entries = NULL;
+    return dictionary;
+}
+\end{csourcecorrection}
+
+\subsection{Recherche de variables}
+
+Ecrire la fonction \ccode{Dictionary_getEntry} qui retourne un pointeur sur l'entrée du dictionnaire correspondant à la variable indiquée. La mise en correspondance entre les noms est insensible à la casse.
+\begin{csource}
+DictionaryEntry * Dictionary_getEntry(Dictionary * dictionary, const char * name);
+\end{csource}
+
+\begin{csourcecorrection}
+DictionaryEntry * Dictionary_getEntry(Dictionary * dictionary, const char * name) {
+    int i;
+
+    REGISTRY_USINGFUNCTION;
+
+    for (i = 0; i < dictionary->count; ++i)
+        if (icaseCompareString(dictionary->entries[i].name, name) == 0)
+            return &dictionary->entries[i];
+    return NULL;
+}
+\end{csourcecorrection}
+
+\subsection{Définition d'une variable du type chaîne de caractères}
+
+Ecrire la fonction \ccode{Dictionary_setStringEntry} qui permet de définir ou modifier une variable du type chaîne de caractères. On prendra soin de libérer les éventuelles zones mémoires inutiles. Attention, lors d'une modification, une variable peut changer de type.
+
+\begin{csource}
+void Dictionary_setStringEntry(Dictionary * dictionary, const char * name, const char * value);
+\end{csource}
+
+\begin{csourcecorrection}
+void Dictionary_setStringEntry(Dictionary * dictionary, const char * name,
+        const char * value) {
+    DictionaryEntry * entry;
+
+    REGISTRY_USINGFUNCTION;
+
+    entry = Dictionary_getEntry(dictionary, name);
+    if (entry == NULL) {
+        dictionary->entries = (DictionaryEntry*) realloc(dictionary->entries,
+                (size_t) (dictionary->count + 1) * sizeof(DictionaryEntry));
+        entry = &dictionary->entries[dictionary->count];
+        entry->name = duplicateString(name);
+        entry->type = UNDEFINED_ENTRY;
+        dictionary->count++;
+    }
+    if (entry->type == STRING_ENTRY)
+        free(entry->value.stringValue);
+    entry->type = STRING_ENTRY;
+    entry->value.stringValue = duplicateString(value);
+}
+\end{csourcecorrection}
+
+\subsection{Définition d'une variable du type nombre réel}
+
+Ecrire la fonction \ccode{Dictionary_setNumberEntry} qui permet de définir ou modifier une variable du type nombre réel. On prendra soin de libérer les éventuelles zones mémoires inutiles. Attention, lors d'une modification, une variable peut changer de type.
+\begin{csource}
+void Dictionary_setNumberEntry(Dictionary * dictionary, const char * name, double value);
+\end{csource}
+\begin{csourcecorrection}
+void Dictionary_setNumberEntry(Dictionary * dictionary, const char * name, double value) {
+    DictionaryEntry * entry;
+
+    REGISTRY_USINGFUNCTION;
+
+    entry = Dictionary_getEntry(dictionary, name);
+    if (entry == NULL) {
+        dictionary->entries = (DictionaryEntry*) realloc(dictionary->entries,
+                (size_t) (dictionary->count + 1) * sizeof(DictionaryEntry));
+        entry = &dictionary->entries[dictionary->count];
+        entry->name = duplicateString(name);
+        entry->type = UNDEFINED_ENTRY;
+        dictionary->count++;
+    }
+    if (entry->type == STRING_ENTRY)
+        free(entry->value.stringValue);
+    entry->type = NUMBER_ENTRY;
+    entry->value.numberValue = value;
+}
+\end{csourcecorrection}
+
+\subsection{Destruction d'un dictionnaire}
+
+Ecrire la fonction \ccode{void Dictionary_destroy(Dictionary * dictionary)} qui détruit et desalloue un dictionnaire et son contenu.
+
+\begin{csourcecorrection}
+void Dictionary_destroy(Dictionary * dictionary) {
+    int i;
+
+    REGISTRY_USINGFUNCTION;
+
+    for (i = 0; i < dictionary->count; ++i) {
+        free(dictionary->entries[i].name);
+        if (dictionary->entries[i].type == STRING_ENTRY)
+            free(dictionary->entries[i].value.stringValue);
+    }
+    free(dictionary->entries);
+    free(dictionary);
+}
+\end{csourcecorrection}
+
+\section{Manipulation du modèle}
+
+\subsection{Création d'un modèle}
+
+Ecrire la fonction \ccode{void PrintFormat_init(PrintFormat * format)} qui permet de crée un modèle vide sur le tas.
+
+\begin{csourcecorrection}
+void PrintFormat_init(PrintFormat * format) {
+    REGISTRY_USINGFUNCTION;
+
+    format->name = duplicateString("");
+    format->header = duplicateString("");
+    format->row = duplicateString("");
+    format->footer = duplicateString("");
+}
+\end{csourcecorrection}
+
+\subsection{Destruction d'un modèle}
+
+Ecrire la fonction \ccode{void PrintFormat_finalize(PrintFormat * format)} qui permet de détruire un modèle ayant été crée sur le tas en libérant les éventuelles zones mémoires inutiles.
+
+\begin{csourcecorrection}
+void PrintFormat_finalize(PrintFormat * format) {
+    REGISTRY_USINGFUNCTION;
+
+    free(format->name);
+    free(format->header);
+    free(format->row);
+    free(format->footer);
+}
+\end{csourcecorrection}
+
+\subsection{Chargement d'un modèle}
+
+Tous les modèles se présentent sous la forme d'un fichier texte dont le contenu est structurée de la façon suivante :
+\begin{csource}
+.NAME Ici il y a le nom du modele
+.HEADER
+Ici commence l'entete
+
+Il peut y avoir plusieurs lignes
+     et meme des blancs
+Ici se termine l'entete
+.ROW
+Ici commence le modele d'une ligne en generale sur une seule ligne
+mais rien ne l'oblige
+.FOOTER
+Ici commence le pied de page
+qui peut aussi comporter plusieurs lignes
+.END
+Il peut y avoir du texte ici mais on l'ignore
+\end{csource}
+L'intégralité du texte, y compris les sauts de lignes, entre deux marqueurs fait partie du modèle. Ainsi, le modèle pour une ligne de produits comporte forcément un saut de ligne à la fin. Une ligne de texte d'un modèle peut être de longueur quelconque.
+
+Ecrire la fonction \ccode{void PrintFormat_loadFromFile(PrintFormat* format, const char* filename)} qui charge un modèle à partir d'un fichier texte. Le modèle fournit en paramètre a déjà été crée sur le tas. Pour cela, on vous conseille d'écrire d'abord la fonction \ccode{static char * readLine(FILE * fichier)} qui lit un ligne entière dans le fichier, quelque soit sa longueur, et qui retourne la ligne comme une chaîne de caractères allouées sur le tas.
+
+\begin{csource}
+char * fgets (char * s, int size, FILE * stream);
+\end{csource}
+\ccode{fgets()} lit au plus \ccode{size-1} caractères depuis \ccode{stream} et les place dans le tampon pointé par \ccode{s}.  La lecture s'arrête après \ccode{EOF} ou un retour-chariot. Si un retour-chariot (newline) est  lu,  il est placé dans le tampon. Un octet nul \ccode{\0} est placé à  la fin de la ligne. \ccode{fgets()} renvoie le pointeur \ccode{s} si elle réussit, et \ccode{NULL} en cas d'erreur, ou si la fin de fichier est atteinte avant d'avoir pu lire au moins un caractère.
+
+\begin{csourcecorrection}
+static char * readLine(FILE * fichier) {
+    char buf[1024];
+    char * result = duplicateString("");
+    size_t len;
+
+    while (fgets(buf, 1024, fichier) != NULL) {
+        char * temp = concatenateString(result, buf);
+        free(result);
+        result = temp;
+
+        len = stringLength(buf);
+        if (len > 0)
+            if (buf[len - 1] == '\n') {
+                return result;
+            }
+    }
+    return result;
+}
+
+void PrintFormat_loadFromFile(PrintFormat * format, const char * filename) {
+    char * line;
+    FILE * fichier;
+
+    REGISTRY_USINGFUNCTION;
+
+    fichier = fopen(filename, "rt");
+    if (fichier == NULL)
+        fatalError("PrintFormat_LoadFromFile");
+
+    line = readLine(fichier);
+    if (icaseStartWith(".NAME ", line)) {
+        free(format->name);
+        line[stringLength(line) - 1] = '\0'; /* suppression du saut de ligne */
+        format->name = duplicateString(line + 6);
+    }
+    free(line);
+
+    free(format->header);
+    format->header = duplicateString("");
+    free(format->row);
+    format->row = duplicateString("");
+    free(format->footer);
+    format->footer = duplicateString("");
+
+    line = readLine(fichier);
+    if (icaseStartWith(".HEADER", line)) {
+        free(line);
+        line = readLine(fichier);
+
+        while (!icaseStartWith(".ROW", line)) {
+            char * temp = concatenateString(format->header, line);
+            free(format->header);
+            format->header = temp;
+            free(line);
+            line = readLine(fichier);
+        }
+        format->header[stringLength(format->header) - 1] = '\0'; /* suppression du saut de ligne */
+    }
+
+    free(line);
+    line = readLine(fichier);
+    while (!icaseStartWith(".FOOTER", line)) {
+        char * temp = concatenateString(format->row, line);
+        free(format->row);
+        format->row = temp;
+        free(line);
+        line = readLine(fichier);
+    }
+    format->row[stringLength(format->row) - 1] = '\0'; /* suppression du saut de ligne */
+
+    free(line);
+    line = readLine(fichier);
+    while (!icaseStartWith(".END", line)) {
+        char * temp = concatenateString(format->footer, line);
+        free(format->footer);
+        format->footer = temp;
+        free(line);
+        line = readLine(fichier);
+    }
+    format->footer[stringLength(format->footer) - 1] = '\0'; /* suppression du saut de ligne */
+    free(line);
+
+    fclose(fichier);
+}
+\end{csourcecorrection}
+
+\section{Formattage d'un modèle à partir d'un dictionnaire}
+
+La création d'un document à partir d'un modèle et d'un dictionnaire suit l'algorithme suivant :
+
+\begin{algorithm}[H]
+    \SetKwInOut{Input}{Entr\'ee}
+    \SetKwInOut{Output}{Sortie}
+    \SetKwInOut{InputCond}{Précondition}
+    \SetKwInOut{OutputCond}{Postcondition}
+    \SetKwInOut{LocalVar}{Variable locale}
+    \SetKw{KwAnd}{et}
+    \SetKwBlock{debut}{Début}{fin}
+    \SetAlgoVlined
+    
+    \While{on n'a pas parcouru tout le modèle}{
+    Chercher le début d'une balise\;
+    Copier le texte précédant la balise\;
+    \eIf{c'est un double '\%'}{
+        Ajouter un '\%' dans le texte
+    }{
+      Chercher la fin de la balise\;
+      Extraire le nom de la balise et ses parametres\;
+      Rechercher la valeur associee au nom de la balise\;
+      Formater la valeur trouvee selon les parametres de la balise\;
+      Ajouter la valeur formatee a la suite du texte\;
+    }
+  }
+  Copier le texte jusqu'à la fin du modèle\;
+\end{algorithm}
+
+En suivant ou non cet algorithme, écrire la fonction \ccode{char * Dictionary_format(Dictionary * dictionary, const char * format)} qui retourne une chaîne de caractères allouée sur le tas contenant le résultat de la mise en forme de la chaîne de format à partir du dictionnaire. Si une variable à substituer n'est pas présente dans le dictionnaire, on affichera un message d'avertissement sur la sortie d'erreur et la substitution de la balise se fera avec la chaîne vide sans aucun formattage supplémentaire.
+
+\begin{csourcecorrection}
+char * Dictionary_format(Dictionary * dictionary, const char * format) {
+    char * result, *temp;
+    char * start, *end;
+    char * name, *parameters;
+    DictionaryEntry * entry;
+
+    REGISTRY_USINGFUNCTION;
+
+    start = indexOfChar(format, '%');
+    if (start == NULL) {
+        result = duplicateString(format);
+    } else {
+        result = subString(format, start);
+
+        while (start != NULL) {
+            end = indexOfChar(start + 1, '%');
+            if (end == NULL) {
+                fprintf(stderr, "Fermeture de balise manquante\n");
+                end = start + stringLength(start);
+            }
+
+            if (start + 1 == end) {
+                temp = concatenateString(result, "%");
+                free(result);
+                result = temp;
+            } else {
+                char * lbrace = indexOfChar(start + 1, '{');
+                if (lbrace == NULL) {
+                    name = subString(start + 1, end);
+                    parameters = duplicateString("");
+                } else if (lbrace > end) {
+                    name = subString(start + 1, end);
+                    parameters = duplicateString("");
+                } else {
+                    char * rbrace = indexOfChar(lbrace + 1, '}');
+                    if (rbrace == NULL || rbrace > end) {
+                        fprintf(stderr, "Accolade fermante manquante dans une balise\n");
+                        rbrace = end - 1;
+                    }
+                    name = subString(start + 1, lbrace);
+                    parameters = subString(lbrace + 1, rbrace);
+                }
+
+                entry = Dictionary_getEntry(dictionary, name);
+                if (entry == NULL) {
+                    fprintf(stderr, "Variable %s non definie donc ignoree\n", name);
+                } else {
+                    char * value;
+                    if (entry->type == STRING_ENTRY) {
+                        char * caseIndex = indexOfString(parameters, "case=");
+                        char * minIndex = indexOfString(parameters, "min=");
+                        char * maxIndex = indexOfString(parameters, "max=");
+
+                        value = duplicateString(entry->value.stringValue);
+                        if (caseIndex != NULL) {
+                            if (toLowerChar(*(caseIndex + 5)) == 'u')
+                                makeUpperCaseString(value);
+                            else
+                                makeLowerCaseString(value);
+                        }
+
+                        if (minIndex != NULL) {
+                            size_t minLength = (size_t) atoi(minIndex + 4);
+                            size_t len = stringLength(value);
+                            if (len < minLength) {
+                                size_t i;
+                                temp = (char*) malloc(minLength + 1);
+                                for (i = 0; i < len; ++i)
+                                    temp[i] = value[i];
+                                for (i = len; i < minLength; ++i)
+                                    temp[i] = ' ';
+                                temp[minLength] = '\0';
+                                free(value);
+                                value = temp;
+                            }
+                        }
+
+                        if (maxIndex != NULL) {
+                            size_t maxLength = (size_t) atoi(maxIndex + 4);
+                            size_t len = stringLength(value);
+                            if (len > maxLength)
+                                value[maxLength] = '\0';
+                        }
+                    } else {
+                        char * precisionIndex = indexOfString(parameters, "precision=");
+                        char * minIndex = indexOfString(parameters, "min=");
+                        int precision, min;
+                        char buf[1024];
+
+                        if (precisionIndex != NULL)
+                            precision = atoi(precisionIndex + 10);
+                        else
+                            precision = -1;
+
+                        if (minIndex != NULL)
+                            min = atoi(minIndex + 4);
+                        else
+                            min = 0;
+
+                        if (precision < 0)
+                            sprintf(buf, "%*f", min, entry->value.numberValue);
+                        else
+                            sprintf(buf, "%*.*f", min, precision, entry->value.numberValue);
+                        value = duplicateString(buf);
+                    }
+
+                    temp = concatenateString(result, value);
+                    free(result);
+                    free(value);
+                    result = temp;
+                }
+                free(name);
+                free(parameters);
+            }
+            start = indexOfChar(end + 1, '%');
+
+            if (start != NULL) {
+                char * sub = subString(end + 1, start);
+                temp = concatenateString(result, sub);
+                free(sub);
+                free(result);
+                result = temp;
+            }
+        }
+
+        temp = concatenateString(result, end + 1);
+        free(result);
+        result = temp;
+    }
+
+    return result;
+}
+\end{csourcecorrection}
+
+
+

@@ -1,0 +1,207 @@
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % PART
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % part page
+    \ifbool{marvel@blackandwhite}{
+        \colorlet{marvel@part@firstcolor}{white}
+        \colorlet{marvel@part@secondcolor}{black}
+    }{
+        \colorlet{marvel@part@firstcolor}{white}
+        \colorlet{marvel@part@secondcolor}{NavyBlue}
+    }
+    \DeclareFixedFont{\marvel@part@numberfont}{\encodingdefault}{phv}{bx}{n}{0.7cm}
+    \DeclareFixedFont{\marvel@part@titlefont}{\encodingdefault}{phv}{bx}{n}{0.7cm}
+    
+    \newsavebox{\marvel@partmatterbox}
+    \newenvironment{partmatter}{%
+        \begin{lrbox*}{\marvel@partmatterbox}%
+        \begin{minipage}{\hsize}%
+    }%
+    {%
+        \end{minipage}%
+        \end{lrbox*}%
+    }
+     
+    \titleformat{\part}[block]{}{}{0pt}%
+    {%
+        \thispagestyle{empty}%
+        \vbox{\vspace{5cm}}%
+        \taburulecolor{marvel@part@secondcolor}%
+        \tabulinesep=0.5cm%
+        \noindent\begin{tabu*} [c] {|X[c,m]|}%
+        \hline%
+        \cellcolor{marvel@part@firstcolor}\color{marvel@part@secondcolor}\csname marvel@part@numberfont\endcsname\partname\\%
+        \cellcolor{marvel@part@secondcolor}\color{marvel@part@firstcolor}\csname marvel@part@titlefont\endcsname#1\\\hline%
+        \end{tabu*}%
+        \vfill%
+        \usebox{\marvel@partmatterbox}%
+        \begin{partmatter}\end{partmatter}%
+        \vbox{\vspace{2cm}}%
+    }
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % CHAPTER
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    % chapter page
+    \ifbool{marvel@blackandwhite}{
+	    \colorlet{marvel@chapter@firstcolor}{white}
+	    \colorlet{marvel@chapter@secondcolor}{black}
+	}
+	{
+		\colorlet{marvel@chapter@firstcolor}{white}
+	    \colorlet{marvel@chapter@secondcolor}{NavyBlue}
+	}	   
+    \newlength{\marvel@chapter@aftervspace}
+    \setlength{\marvel@chapter@aftervspace}{4cm}
+    \DeclareFixedFont{\marvel@chapter@numberfont}{\encodingdefault}{phv}{bx}{n}{2cm}
+    \DeclareFixedFont{\marvel@chapter@titlefont}{\encodingdefault}{phv}{bx}{n}{0.7cm}
+    
+    
+    \renewcommand{\chaptername}{Chapitre}
+    \renewcommand{\appendixname}{Annexe}
+    
+    \newbool{marvel@titlesec@hasnumber}
+    \newlength{\marvel@chapter@numwidth}
+    
+    \titlespacing{\chapter}{0pt}{50pt}{\csname marvel@chapter@aftervspace\endcsname}
+    
+    \titleformat{\chapter}[block]{\global\setbool{marvel@titlesec@hasnumber}{false}}{\global\setbool{marvel@titlesec@hasnumber}{true}}{0pt}%
+    {%  
+        \thispagestyle{empty}%  
+        \taburulecolor{marvel@chapter@secondcolor}%
+        \tabulinesep=0.5cm%    
+        \begin{tabu*} [c] {|X[1,c,m]|X[6,m]|}\hline%
+        \cellcolor{marvel@chapter@secondcolor}\color{marvel@chapter@firstcolor}\csname marvel@chapter@numberfont\endcsname%
+        \ifbool{marvel@titlesec@hasnumber}{\thechapter}{ }&%    
+        \cellcolor{marvel@chapter@firstcolor}\color{marvel@chapter@secondcolor}\csname marvel@chapter@titlefont\endcsname#1\\\hline%
+        \end{tabu*}% 
+    }
+    
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % SECTION
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    % section heading
+    \ifbool{marvel@blackandwhite}{
+	    \colorlet{marvel@section@firstcolor}{white}
+	    \colorlet{marvel@section@secondcolor}{black}
+	}
+	{
+		\colorlet{marvel@section@firstcolor}{white}
+	    \colorlet{marvel@section@secondcolor}{RoyalBlue}
+	}
+    \DeclareFixedFont{\marvel@section@numberfont}{T1}{phv}{b}{n}{12pt}
+    \DeclareFixedFont{\marvel@section@titlefont}{T1}{phv}{b}{n}{12pt}
+    
+    \titlespacing{\section}{0pt}{1ex plus 1ex minus 0.5ex}{1ex plus 1ex minus 0.5ex}
+    
+    \titleformat{\section}[block]{\global\setbool{marvel@titlesec@hasnumber}{false}}{\global\setbool{marvel@titlesec@hasnumber}{true}}{0pt}%
+    {%
+        \begin{minipage}{\hsize-1pt}%
+        \taburulecolor{marvel@section@secondcolor}%
+        \tabulinesep=2pt%    
+        \begin{tabu*}[l] {X[-1,c,m]X[6,m]}%
+        \cellcolor{marvel@section@secondcolor}\color{marvel@section@firstcolor}\csname marvel@section@numberfont\endcsname%
+        \ifbool{marvel@titlesec@hasnumber}{\arabic{section}}{ }&%    
+        \cellcolor{marvel@section@firstcolor}\color{marvel@section@secondcolor}\csname marvel@section@titlefont\endcsname#1\\\hline%
+        \end{tabu*}% 
+        \end{minipage}%
+    }
+    
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % SUBSECTION
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \ifbool{marvel@blackandwhite}{
+	    \colorlet{marvel@subsection@firstcolor}{white}
+	    \colorlet{marvel@subsection@secondcolor}{black}
+	}
+	{
+		\colorlet{marvel@subsection@firstcolor}{white}
+	    \colorlet{marvel@subsection@secondcolor}{NavyBlue}
+	}
+    \DeclareFixedFont{\marvel@subsection@numberfont}{T1}{phv}{m}{n}{11pt}
+    \DeclareFixedFont{\marvel@subsection@titlefont}{T1}{phv}{m}{n}{11pt}
+    
+    \titlespacing{\subsection}{0pt}{1ex plus 1ex minus 0.5ex}{1ex plus 1ex minus 0.5ex}
+    
+    \titleformat{\subsection}[block]{\global\setbool{marvel@titlesec@hasnumber}{false}}{\global\setbool{marvel@titlesec@hasnumber}{true}}{0pt}%
+    {%
+        \begin{minipage}{\hsize-1pt}%
+        \taburulecolor{marvel@subsection@secondcolor}%
+        \tabulinesep=2pt%    
+        \begin{tabu*}  [l] {X[-1,c,m]X[6,m]}%
+        \cellcolor{marvel@subsection@secondcolor}\color{marvel@subsection@firstcolor}\csname marvel@subsection@numberfont\endcsname%
+        \ifbool{marvel@titlesec@hasnumber}{\arabic{section}.\arabic{subsection}}{ }&%    
+        \cellcolor{marvel@subsection@firstcolor}\color{marvel@subsection@secondcolor}\csname marvel@subsection@titlefont\endcsname#1\\\hline%
+        \end{tabu*}% 
+        \end{minipage}%
+    }
+    
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % SUBSUBSECTION
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    \ifbool{marvel@blackandwhite}{
+	    \colorlet{marvel@subsubsection@firstcolor}{white}
+	    \colorlet{marvel@subsubsection@secondcolor}{black}
+	}
+	{
+		\colorlet{marvel@subsubsection@firstcolor}{white}
+	    \colorlet{marvel@subsubsection@secondcolor}{BlueViolet}
+	}
+    \DeclareFixedFont{\marvel@subsubsection@numberfont}{T1}{phv}{m}{n}{10pt}
+    \DeclareFixedFont{\marvel@subsubsection@titlefont}{T1}{phv}{m}{n}{10pt}
+    
+    \titlespacing{\subsubsection}{0pt}{1ex plus 1ex minus 0.5ex}{1ex plus 1ex minus 0.5ex}
+    
+    \titleformat{\subsubsection}[block]{\global\setbool{marvel@titlesec@hasnumber}{false}}{\global\setbool{marvel@titlesec@hasnumber}{true}}{0pt}%
+    {%
+        \begin{minipage}{\hsize-1pt}%
+        \taburulecolor{marvel@subsubsection@secondcolor}%
+        \tabulinesep=2pt%    
+        \begin{tabu*}  [c] {X[-1,c,m]X[6,m]}%
+        \cellcolor{marvel@subsubsection@secondcolor}\color{marvel@subsubsection@firstcolor}\csname marvel@subsubsection@numberfont\endcsname%
+        \ifbool{marvel@titlesec@hasnumber}{\arabic{section}.\arabic{subsection}.\arabic{subsubsection}}{ }&%    
+        \cellcolor{marvel@subsubsection@firstcolor}\color{marvel@subsubsection@secondcolor}\csname marvel@subsubsection@titlefont\endcsname#1\\\hline%
+        \end{tabu*}% 
+        \end{minipage}%
+    }
+    
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % PARAGRAPH
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    \ifbool{marvel@blackandwhite}{
+    	\colorlet{marvel@paragraph@titlecolor}{black}
+    }
+    {
+    	\colorlet{marvel@paragraph@titlecolor}{Violet}
+    }
+    \DeclareFixedFont{\marvel@paragraph@titlefont}{T1}{phv}{m}{n}{10pt}
+    
+    \titlespacing{\paragraph}{0pt}{1ex plus 1ex minus 0.5ex}{1ex plus 0.1ex minus 0.1ex}
+    
+    \titleformat{\paragraph}[hang]{\color{marvel@paragraph@titlecolor}\csname marvel@paragraph@titlefont\endcsname}{\theparagraph}{0pt}{#1}
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % SUBPARAGRAPH
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \ifbool{marvel@blackandwhite}{
+    	\colorlet{marvel@subparagraph@titlecolor}{black}
+    }
+    {
+    	\colorlet{marvel@subparagraph@titlecolor}{Plum}
+    }
+    \DeclareFixedFont{\marvel@subparagraph@titlefont}{T1}{phv}{m}{n}{10pt}
+    
+    \titlespacing{\subparagraph}{0pt}{1ex plus 1ex minus 0.5ex}{1ex plus 0.1ex minus 0.1ex}
+    
+    \titleformat{\subparagraph}[hang]{\color{marvel@subparagraph@titlecolor}\csname marvel@subparagraph@titlefont\endcsname}{\thesubparagraph}{0pt}{#1}
+    
+    

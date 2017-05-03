@@ -1,0 +1,73 @@
+#!/bin/bash
+
+endScriptError() {
+    kdialog --title "Error" --error "An error occurred. See the console for details"
+    qdbus $dbusRef close 2> /dev/null > /dev/null
+    exit 1
+}
+
+
+[[ -z $(which kdialog) ]] && "kdialog not found." && exit 1
+[[ -z $(which wget) ]] && "wget not found." && exit 1
+
+
+if find . -maxdepth 0 -empty | read; then
+    qdbus $dbusRef setLabelText "Creating a backup..." 2> /dev/null > /dev/null
+
+    dir="../$(basename $(pwd))-$(date +%F#%T)"
+
+    if [[ -d "$dir" ]]; then
+	echo "Can not create backup ! $dir already exists."
+	exit 1
+    fi
+
+    echo "Backuping to $dir..."
+    mkdir "$dir"
+    cp -r . "$dir/" || (echo "Can not create backup !"; exit 1)
+    rmdir "$dir"
+fi
+
+
+wget -q -O - https://storage.projectsforge.org/update/c/update.sh > update.sh-new
+if (diff update.sh update.sh-new >/dev/null 2>/dev/null) ; then
+  echo "Script is up to date. Continuing..."
+  rm update.sh-new
+else
+  mv update.sh-new update.sh
+  chmod +x update.sh
+  echo "Script updated to latest version. Restarting..."
+  ./update.sh
+  exit $?
+fi
+
+dbusRef=$(kdialog --title "Downloading files..." --progressbar "Self updating...                                                                                       " 4)
+
+arch=$(uname -m)
+
+rm -rf update
+mkdir -p update
+
+qdbus $dbusRef setLabelText "Downloading files..." 2> /dev/null > /dev/null
+
+
+
+qdbus $dbusRef Set "" value 1 2> /dev/null > /dev/null
+wget -q --no-check-certificate https://storage.projectsforge.org/update/c/base-$arch.tar.gz -O update/base.tar.gz || endScriptError
+qdbus $dbusRef Set "" value 2 2> /dev/null > /dev/null
+wget -q --no-check-certificate https://storage.projectsforge.org/update/c/doc.tar.gz -O update/doc.tar.gz 2>&1 || endScriptError
+qdbus $dbusRef Set "" value 3 2> /dev/null > /dev/null
+wget -q --no-check-certificate https://storage.projectsforge.org/update/c/user-$arch.tar.gz -O update/user.tar.gz || endScriptError
+
+qdbus $dbusRef setLabelText "Extracting files..." 2> /dev/null > /dev/null
+qdbus $dbusRef Set "" value 4 2> /dev/null > /dev/null
+tar -xzf update/base.tar.gz || endScriptError
+tar -xzf update/doc.tar.gz || endScriptError
+tar -xzkf update/user.tar.gz
+echo "Error here are normal !!"
+# || endScriptError
+
+rm -rf update
+
+qdbus $dbusRef close 2> /dev/null > /dev/null
+
+exit 0

@@ -1,0 +1,55 @@
+
+\ifbool{marvel@blackandwhite}{
+	\PassOptionsToPackage{linkcolor=black,citecolor=black,filecolor=black,urlcolor=black}{hyperref}
+}
+{
+	\PassOptionsToPackage{linkcolor=red,citecolor=green,filecolor=cyan,urlcolor=magenta}{hyperref}
+}
+
+\RequirePackage[plainpages=false,
+                pdfpagelabels=true,
+                final,
+                verbose=true,
+                breaklinks=true,
+                colorlinks=true,
+                bookmarksopen=true,
+                pdfborder={0 0 0},
+                unicode=true,
+                bookmarksnumbered,
+                pdfnewwindow=true,
+                pdfstartview={FitH},
+                pdftoolbar=true,
+                pdfmenubar=true,
+                bookmarks=true]{hyperref}
+    
+\RequirePackage{beamerbasercs}    
+\RequirePackage{beamerbasemodes}% Setup modes and check for article option
+   
+\newif\ifbeamer@articlehyperref
+\beamer@articlehyperreftrue
+    
+\newif\ifbeamer@articlexcolor
+\beamer@articlexcolortrue
+    
+\newif\ifbeamer@articleactive
+\beamer@articleactivefalse
+
+\newif\ifbeamer@amssymb
+\beamer@amssymbtrue
+
+
+\def\beamer@slide#1#2{\expandafter\gdef\csname beamer@slide#1\endcsname{#2}}
+\beamer@inpresentationfalse
+ 
+\ifx\beamer@currentmode\@undefined
+  \def\beamer@currentmode{article}
+\fi
+ 
+\mode
+<all>
+ 
+\RequirePackage{beamerbaseoptions}% For option management
+ 
+\RequirePackage{beamerbaserequires}% Beamer packages required both by presentation and article modes
+ 
+

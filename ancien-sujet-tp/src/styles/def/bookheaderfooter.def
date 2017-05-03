@@ -1,0 +1,46 @@
+ 
+    % header/footer
+    \DeclareFixedFont{\marvel@header@font}{\encodingdefault}{cmr}{b}{n}{10pt}
+    \DeclareFixedFont{\marvel@footer@font}{\encodingdefault}{cmr}{b}{n}{10pt}
+    
+    \ifbool{marvel@blackandwhite}{
+        \colorlet{marvel@header@textcolor}{black}
+        \colorlet{marvel@header@rulecolor}{black}
+        \colorlet{marvel@footer@textcolor}{black}
+        \colorlet{marvel@footer@rulecolor}{black}
+    }{
+        \colorlet{marvel@header@textcolor}{NavyBlue}
+        \colorlet{marvel@header@rulecolor}{NavyBlue}
+        \colorlet{marvel@footer@textcolor}{NavyBlue}
+        \colorlet{marvel@footer@rulecolor}{NavyBlue}
+    }
+    
+    \pagestyle{fancy}
+    
+    \fancyhf{} % clear all header and footer fields
+    \fancyhead[RO,LE]{\color{marvel@header@textcolor}\marvel@header@font\leftmark}
+    \fancyfoot[LE,RO]{\color{marvel@footer@textcolor}\marvel@footer@font\thepage}
+    
+    \renewcommand{\headrulewidth}{1pt}
+    \renewcommand{\footrulewidth}{1pt}
+    
+    \renewcommand{\headrule}{\color{marvel@header@rulecolor}\hrule width\headwidth height\headrulewidth \vskip-\headrulewidth}
+    \renewcommand{\footrule}{\color{marvel@footer@rulecolor}\vskip-\footruleskip\vskip-\footrulewidth\hrule width\headwidth height\footrulewidth\vskip\footruleskip}
+    
+    \fancypagestyle{plain}{%
+      \fancyhf{} % clear all header and footer fields
+      \fancyfoot[LE,RO]{\color{marvel@footer@textcolor}\marvel@footer@font\thepage}
+      \renewcommand{\headrulewidth}{0pt}
+      \renewcommand{\footrulewidth}{1pt}
+    }
+    
+    \renewcommand{\chaptermark}[1]{\markboth{\thechapter\ #1}{}}
+    
+    %page vide
+    \def\cleardoublepage{\clearpage\if@twoside \ifodd\c@page\else
+    \hbox{}
+    \thispagestyle{empty}
+    \newpage
+    \if@twocolumn\hbox{}\newpage\fi\fi\fi}
+    
+    \setcounter{secnumdepth}{3}

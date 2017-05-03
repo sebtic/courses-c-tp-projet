@@ -1,0 +1,486 @@
+\chapter{TD2\&3 et TP4 : Les chaînes de caractères et leur
+manipulation}
+
+Dans l'ensemble de ces TDs/TPs, il vous est interdit d'utiliser le fichier
+d'entête \ccode{string.h}. Vous allez au fur et à mesure réécrire toutes
+les fonctions dont vous allez avoir besoin.
+
+Le fichier d'entête \ccode{base/MyString.h} définit un certain nombre de
+macros vous permettant d'utiliser au choix, soit le nom standard de la commande,
+soit le nom spécifique de la commande. Les fonctions qui sont dans ce cas sont :
+\ccode{strcmp}, \ccode{strlen}, \ccode{strcpy}, \ccode{strncpy}, \ccode{strdup}, \ccode{strcasecmp}, \ccode{tolower}, \ccode{toupper}, \ccode{strcat},
+\ccode{strncat}, \ccode{index} et \ccode{strstr}.
+
+\section{\ccode{MyString.c} : niveau débutant}
+
+\subsection{Conversion minuscule/majuscule}
+
+Ecrire la fonction \ccode{char toLowerChar(char c)} qui retourne le
+caractère fournit en paramètre en minuscule s'il s'agit d'une lettre.
+
+\begin{csourcecorrection}
+char toLowerChar(char c) {
+    if ('A' <= c && c <= 'Z')
+        return (char) (c - 'A' + 'a');
+    else
+        return c;
+}
+\end{csourcecorrection}
+  
+Ecrire la fonction \ccode{char toUpperChar(char c)} qui retourne le
+caractère fournit en paramètre en majuscule s'il s'agit d'une lettre.
+
+\begin{csourcecorrection}
+char toUpperChar(char c) {
+    if ('a' <= c && c <= 'z')
+        return (char) (c - 'a' + 'A');
+    else
+        return c;
+}
+\end{csourcecorrection}
+
+Ecrire la fonction \ccode{void makeLowerCaseString(char * str)} qui transforme en minuscule la chaîne de caractères fournie en paramètre.
+
+\begin{csourcecorrection}
+void makeLowerCaseString(char * str) {
+    while (*str != '\0') {
+        *str = toLowerChar(*str);
+        str++;
+    }
+}
+\end{csourcecorrection}
+
+Ecrire la fonction \ccode{void makeUpperCaseString(char * str)} qui transforme en majuscule la chaîne de caractères fournie en paramètre.
+
+\begin{csourcecorrection}
+void makeUpperCaseString(char * str) {
+    while (*str != '\0') {
+        *str = toUpperChar(*str);
+        str++;
+    }
+}
+\end{csourcecorrection}
+
+\subsection{Longueur d'une chaîne de caractères}
+
+Ecrire la fonction \ccode{size_t stringLength(const char * str)} qui
+retourne le nombre de caractères d'une chaîne. Donner au moins deux solutions
+utilisant des mécanismes différents.
+
+\begin{csourcecorrection}
+size_t stringLength(const char * str) {
+    size_t count = 0;
+    while (*str != '\0') {
+        count++;
+        str++;
+    }
+    return count;
+}
+\end{csourcecorrection}
+
+\subsection{Comparaison de chaînes de caractères}
+
+Ecrire la fonction \ccode{int compareString(const char * str1, const char * str2)} qui compare deux chaînes de caractères selon l'ordre lexicographique. La fonction retourne, respectivement, un nombre négatif, 0 ou un nombre positif, si la première chaîne est, respectivement, avant, égale ou après la seconde chaîne dans l'ordre lexicographique.
+
+L'ordre lexicographique ordonne les chaînes suivantes dans l'ordre ci-dessous :
+\begin{itemize}
+  \item \ccode{""} la chaîne vide
+  \item \ccode{"a"}
+  \item \ccode{"aa"}
+  \item \ccode{"aaz"}
+  \item \ccode{"ab"}
+  \item \ccode{"b"}
+  \item \ccode{"qslkddflk"}
+  \item \ccode{"z"}
+\end{itemize}
+L'ordre lexicographique respecte l'ordre naturel des caractères de la table ASCII. Ainsi, \ccode{"A"} est avant \ccode{"a"}.
+
+\begin{csourcecorrection}
+int compareString(const char * str1, const char * str2) {
+    while (*str1 != '\0' && *str2 != '\0' && *str1 == *str2) {
+        str1++;
+        str2++;
+    }
+    if (*str1 == '\0' && *str2 == '\0')
+        return 0;
+    else {
+        return *str1 - *str2;
+    }
+}
+\end{csourcecorrection}
+
+\subsection{Comparaison de chaînes de caractères insensible à la casse}
+
+Ecrire la fonction \ccode{int icaseCompareString(const char * str1, const char * str2)} qui compare deux chaînes de caractères comme \ccode{compareString} mais sans tenir compte de la différence majsucule/minuscule.
+
+\begin{csourcecorrection}
+int icaseCompareString(const char * str1, const char * str2) {
+    while (*str1 != '\0' && *str2 != '\0' && toLowerChar(*str1) == toLowerChar(*str2)) {
+        str1++;
+        str2++;
+    }
+    if (*str1 == '\0' && *str2 == '\0')
+        return 0;
+    else {
+        return toLowerChar(*str1) - toLowerChar(*str2);
+    }
+}
+\end{csourcecorrection}
+
+\subsection{Recherche de caractères dans une chaîne de caractères}
+
+Ecrire la fonction \ccode{const char * indexOfChar(const char *str, char c)} qui retourne un pointeur sur la première occurence du caractère \ccode{c} dans la chaîne ou \ccode{NULL} si la chaîne ne contient pas le caractère recherché.
+
+\begin{csourcecorrection}
+const char * indexOfChar(const char *s, char c) {
+    while (*s != '\0' && *s != c)
+        s++;
+    if (*s == c)
+        return (char*) s;
+    else
+        return NULL;
+}
+\end{csourcecorrection}
+
+\subsection{Recherche d'une chaîne de caractères dans une chaîne de caractères}
+
+Ecrire la fonction \ccode{char *indexOfString(const char *meule_de_foin, const char *aiguille)} qui retourne un pointeur sur la première occurence de \ccode{aiguille} dans \ccode{meule_de_foin} ou \ccode{NULL} si la chaîne \ccode{meule_de_foin} ne contient pas la chaîne recherchée.
+
+\begin{csourcecorrection}
+char * indexOfString(const char *meule_de_foin, const char *aiguille) {
+    while (*meule_de_foin != '\0') {
+        char * pmeule = (char*) meule_de_foin;
+        char * paiguille = (char*) aiguille;
+        while (*pmeule != '\0' && *paiguille != '\0' && *pmeule == *paiguille) {
+            pmeule++;
+            paiguille++;
+        }
+        if (*paiguille == '\0') {
+            return (char*) meule_de_foin;
+        }
+        meule_de_foin++;
+    }
+    return NULL;
+}
+\end{csourcecorrection}
+
+
+\subsection{Est-ce que la chaîne de caractères commence par \ldots ?}
+
+Ecrire la fonction \ccode{int icaseStartWith(const char * start, const char * str)} qui retourne vrai si la chaîne de caractères \ccode{str} débute par la chaîne de caractères \ccode{start} et faux sinon. La comparaison est insensible à la casse.
+
+\begin{csourcecorrection}
+int icaseStartWith(const char * start, const char * str) {
+    while (*start != '\0' && *str != '\0' && toLowerChar(*start) == toLowerChar(*str)) {
+        start++;
+        str++;
+    }
+    return (*start == '\0');
+}
+\end{csourcecorrection}
+
+\subsection{Est-ce que la chaîne de caractères se termine par \ldots ?}
+
+Ecrire la fonction \ccode{int icaseEndWith(const char * end, const char * str)} qui retourne vrai si la chaîne de caractères \ccode{str} se termine par la chaîne de caractères \ccode{end} et faux sinon. La comparaison est insensible à la casse.
+
+\begin{csourcecorrection}
+int icaseEndWith(const char * end, const char * str) {
+    size_t lenStr;
+    size_t lenEnd;
+
+    lenStr = stringLength(str);
+    lenEnd = stringLength(end);
+
+    if (lenStr < lenEnd)
+        return 0;
+    str += lenStr - lenEnd;
+    while (*end != '\0' && *str != '\0' && toLowerChar(*end) == toLowerChar(*str)) {
+        end++;
+        str++;
+    }
+    return (*end == '\0');
+}
+\end{csourcecorrection}
+
+\subsection{Copie d'une chaîne de caractères dans une autre}
+
+Ecrire la fonction \ccode{void copyStringWithLength(char * dest, const char * src, size_t destSize)} qui copie les caractères de \ccode{src} dans la chaîne \ccode{dest}. Cette opération copie au maximum \ccode{destSize} caractères dans la chaîne. Il peut donc y avoir troncature lors de la copie. Dans tous les cas, \ccode{dest} est une chaîne de  caractères valide au sens des convention du C après l'opération.
+
+\begin{csourcecorrection}
+void copyStringWithLength(char * dest, const char * src, size_t destsize) {
+    size_t len;
+    size_t i;
+
+    if (destsize == 0)
+        fatalError("destSize must not be null");
+
+    len = stringLength(src);
+
+    if (len + 1 > destsize)
+        len = destsize - 1;
+    for (i = 0; i < len; ++i)
+        dest[i] = src[i];
+    dest[len] = '\0';
+}
+\end{csourcecorrection}
+
+\section{\ccode{MyString.c} : niveau intermédiaire}
+
+\subsection{Duplication d'une chaîne sur le tas}
+
+Ecrire la fonction \ccode{char * duplicateString(const char * str)} qui retourne une nouvelle chaîne allouée sur le tas contenant une copie des caractères de \ccode{str}.
+
+\begin{csourcecorrection}
+char * duplicateString(const char * str) {
+    char * result;
+    char * p;
+
+    result = malloc((size_t) stringLength(str) + 1);
+    if (result == NULL)
+        fatalError("Echec d'allocation");
+    p = result;
+
+    while (*str != '\0')
+        *p++ = *str++;
+    *p = *str;
+    return result;
+}
+\end{csourcecorrection}
+
+\subsection{Concaténation sur le tas}
+
+Ecrire la fonction \ccode{char * concatenateString(const char * str1, const char * str2)} qui retourne une nouvelle chaîne allouée sur le tas. La nouvelle chaîne est le résultat de la concaténation des deux chaînes \ccode{str1} et \ccode{str2}.
+
+\begin{csourcecorrection}
+char * concatenateString(const char * src1, const char * src2) {
+    char * result;
+    char * p;
+
+    result = (char*) malloc(stringLength(src1) + stringLength(src2) + 1);
+    if (result == NULL)
+        fatalError("Echec d'allocation");
+    p = result;
+
+    while (*src1 != '\0') {
+        *p = *src1;
+        p++;
+        src1++;
+    }
+
+    while (*src2 != '\0') {
+        *p = *src2;
+        p++;
+        src2++;
+    }
+    *p = '\0';
+    return result;
+}
+\end{csourcecorrection}
+
+\subsection{Extraction d'une sous chaîne de caractères}
+
+Ecrire la fonction \ccode{char * subString(const char * start, const char * end)} qui retourne une nouvelle chaîne allouée sur le tas. La nouvelle chaîne contient les caractères commençant à \ccode{start} (inclu) et se terminant à \ccode{end} (exclu). La nouvelle chaîne est une chaîne de  caractères valide au sens des conventions du C après l'opération. On suppose que \ccode{start} et \ccode{end} pointe sur des caractères valides d'une chaîne de caractères.
+
+\begin{csource}
+char * str = "abcdef";
+char * s1 = subString(str,str);
+char * s2 = subString(str,str+strlen(str));
+char * s3 = subString(str+1,str+2);
+\end{csource}
+L'extrait de code précédent produit les chaînes de caractères suivantes :
+\begin{description}
+  \item[s1] \ccode{""}
+  \item[s2] \ccode{"abcdef"}
+  \item[s3] \ccode{"b"}
+\end{description}
+
+\begin{csourcecorrection}
+char * subString(const char * start, const char * end) {
+    char * result;
+    char * p;
+
+    result = (char*) malloc((size_t) (end - start + 1));
+    p = result;
+
+    while (*start != *end) {
+        *p = *start;
+        start++;
+        p++;
+    }
+    *p = '\0';
+    return result;
+}
+\end{csourcecorrection}
+
+\subsection{Insertion dans une chaîne de caractères}
+
+Ecrire la fonction \ccode{insertString} qui retourne une nouvelle chaîne allouée sur le tas. La nouvelle chaîne est obtenue par insertion de \ccode{insertLength} caractères de \ccode{toBeInserted} dans la chaîne \ccode{src} à la position \ccode{insertPosition}. On suppose que \ccode{toBeInserted} contient au moins \ccode{insertLength} caractères autre que le marqueur de fin et que \ccode{insertPosition} est une position valide dans la chaîne \ccode{src}.
+\begin{csource}
+char * insertString(const char * src, int insertPosition, const char * toBeInserted, int insertLength);
+\end{csource}
+
+\begin{csource}
+const char * src = "abcghi";
+const char * toBeInserted = "def";
+
+temp1 = insertString(src, 3, toBeInserted, 3);
+/* temp1 doit correspondre a "abcdefghi" */
+
+temp2 = insertString(src, 3, toBeInserted, 2);
+/* temp2 doit correspondre a "abcdeghi" */
+
+temp3 = insertString(src, 0, toBeInserted, 2);
+/* temp3 doit correspondre a "deabcghi" */
+
+temp4 = insertString(src, 6, toBeInserted, 2);
+/* temp4 doit correspondre a "abcghide" */
+\end{csource}
+
+\begin{csourcecorrection}
+char * insertString(const char * src, int insertPosition, const char * toBeInserted,
+        int insertLength) {
+    char * result;
+    int i;
+
+    result = (char*) malloc(stringLength(src) + (size_t) insertLength + 1);
+
+    for (i = 0; i < insertPosition; ++i)
+        result[i] = src[i];
+    for (i = 0; i < insertLength; ++i)
+        result[insertPosition + i] = toBeInserted[i];
+    for (i = insertPosition; src[i] != '\0'; ++i)
+        result[i + insertLength] = src[i];
+    result[i + insertLength] = '\0';
+    return result;
+}
+\end{csourcecorrection}
+
+\section{\ccode{EncryptDecrypt.c} : chiffrage avec la méthode de Vigenère}
+
+Nous allons écrire les fonctions suivantes :
+\begin{itemize}
+  \item \ccode{void encrypt(const char * key, char * str)}
+  \item \ccode{void decrypt(const char * key, char * str)}
+\end{itemize}
+\ccode{key} est la clé de chiffrage. Elle ne contient que des lettres en majuscule ou en minuscule. Lors du processus de chiffrage/déchiffrage, la casse de la clé sera ignorée (ex: les clés ab et AB doivent conduire au même résultats).
+
+\begin{csourcecorrection}
+void encrypt(const char * key, char * str) {
+    const char * p = key;
+
+    while (*str != '\0') {
+        if ('a' <= *str && *str <= 'z')
+            *str = (char) ((*str - 'a' + toLowerChar(*p) - 'a') % 26 + 'a');
+        else if ('A' <= *str && *str <= 'Z')
+            *str = (char) ((*str - 'A' + toLowerChar(*p) - 'a') % 26 + 'A');
+        str++;
+        p++;
+        if (*p == '\0')
+            p = key;
+    }
+}
+
+void decrypt(const char * key, char * str) {
+    const char * p = key;
+
+    while (*str != '\0') {
+        if ('a' <= *str && *str <= 'z')
+            *str = (char) ((26 + *str - 'a' - (toLowerChar(*p) - 'a')) % 26 + 'a');
+        else if ('A' <= *str && *str <= 'Z')
+            *str = (char) ((26 + *str - 'A' - (toLowerChar(*p) - 'a')) % 26 + 'A');
+        str++;
+        p++;
+        if (*p == '\0')
+            p = key;
+    }
+}
+\end{csourcecorrection}
+
+\subsection{La méthode}
+
+Le principe de la méthode de Vigenère repose sur l'emploi d'une table de correspondance (dite \og table de Vigenère \fg{}, voir plus loin) et d'un mot clef dont la longueur est choisie arbitrairement. Le chiffrage d'un texte est effectué de la manière suivante :
+
+\vspace{0.5em}
+Mot clef : \texttt{PERDU}
+
+Texte : \texttt{L'ESCARGOT SE PROMENE AVAC SA MAISON}
+
+\vspace{0.5em}
+On affecte, de gauche à droite, une lettre du mot-clef pour chaque lettre du texte. Le mot-clef est répété autant de fois que nécessaire (les caractères non chiffrés ont été supprimés) :
+
+\begin{center}
+\texttt{%
+L E S C A R G O T S E P R O M E N E A V A C S A M A I S O N\\
+P E R D U P E R D U P E R D U P E R D U P E R D U P E R D U
+}
+\end{center}
+
+La première lettre du texte à chiffrer est un 'L'. Elle se trouve au dessus de la lettre 'P' du mot-clef. En se reportant au tableau de Vigenère, on voit que l'intersection de la ligne 'L' avec la colonne 'P' est la lettre 'A'. Le 'A' devient la première lettre du message chiffré. On répète cette opération pour toutes les lettres du texte qui se trouve ainsi chiffré (les caractères non chiffrés restend inchangés):
+
+\begin{center}
+\texttt{%
+A'IJFUGKFW MT TIRGTRV DPTG JD GPMJRH
+}
+\end{center}
+
+Pour déchiffrer le message, on procède par la méthode inverse :
+
+\begin{center}
+\texttt{%
+P E R D U P E R D U P E R D U P E R D U P E R D U P E R D U \\
+A I J F U G K F W M T T I R G T R V D P T G J D G P M J R H
+}
+\end{center}
+
+Pour la première lettre du message, on prend la colonne 'P' du tableau et on recherche la lettre 'A' en descendant la colonne. La ligne correspondant à la lettre 'A' donne la lettre encodée : 'L'. On déchiffre le reste du message en répétant cette opération pour toutes les lettres du message. La clé est réutilisée de façon cyclique afin d'obtenir une clé suffisament longue.
+
+\subsection{Table de Vigenère}
+
+\begin{center}
+\noindent\scalebox{0.84}{\centering
+  \begin{tabular}{|c|cccccccccccccccccccccccccc|}
+    \hline
+     &A&B&C&D&E&F&G&H&I&J&K&L&M&N&O&P&Q&R&S&T&U&V&W&X&Y&Z\\
+    \hline
+    A&a&b&c&d&e&f&g&h&i&j&k&l&m&n&o&p&q&r&s&t&u&v&w&x&y&z\\
+    B&b&c&d&e&f&g&h&i&j&k&l&m&n&o&p&q&r&s&t&u&v&w&x&y&z&a\\
+    C&c&d&e&f&g&h&i&j&k&l&m&n&o&p&q&r&s&t&u&v&w&x&y&z&a&b\\
+    D&d&e&f&g&h&i&j&k&l&m&n&o&p&q&r&s&t&u&v&w&x&y&z&a&b&c\\
+    E&e&f&g&h&i&j&k&l&m&n&o&p&q&r&s&t&u&v&w&x&y&z&a&b&c&d\\
+    F&f&g&h&i&j&k&l&m&n&o&p&q&r&s&t&u&v&w&x&y&z&a&b&c&d&e\\
+    G&g&h&i&j&k&l&m&n&o&p&q&r&s&t&u&v&w&x&y&z&a&b&c&d&e&f\\
+    H&h&i&j&k&l&m&n&o&p&q&r&s&t&u&v&w&x&y&z&a&b&c&d&e&f&g\\
+    I&i&j&k&l&m&n&o&p&q&r&s&t&u&v&w&x&y&z&a&b&c&d&e&f&g&h\\
+    J&j&k&l&m&n&o&p&q&r&s&t&u&v&w&x&y&z&a&b&c&d&e&f&g&h&i\\
+    K&k&l&m&n&o&p&q&r&s&t&u&v&w&x&y&z&a&b&c&d&e&f&g&h&i&j\\
+    L&l&m&n&o&p&q&r&s&t&u&v&w&x&y&z&a&b&c&d&e&f&g&h&i&j&k\\
+    M&m&n&o&p&q&r&s&t&u&v&w&x&y&z&a&b&c&d&e&f&g&h&i&j&k&l\\
+    N&n&o&p&q&r&s&t&u&v&w&x&y&z&a&b&c&d&e&f&g&h&i&j&k&l&m\\
+    O&o&p&q&r&s&t&u&v&w&x&y&z&a&b&c&d&e&f&g&h&i&j&k&l&m&n\\
+    P&p&q&r&s&t&u&v&w&x&y&z&a&b&c&d&e&f&g&h&i&j&k&l&m&n&o\\
+    Q&q&r&s&t&u&v&w&x&y&z&a&b&c&d&e&f&g&h&i&j&k&l&m&n&o&p\\
+    R&r&s&t&u&v&w&x&y&z&a&b&c&d&e&f&g&h&i&j&k&l&m&n&o&p&q\\
+    S&s&t&u&v&w&x&y&z&a&b&c&d&e&f&g&h&i&j&k&l&m&n&o&p&q&r\\
+    T&t&u&v&w&x&y&z&a&b&c&d&e&f&g&h&i&j&k&l&m&n&o&p&q&r&s\\
+    U&u&v&w&x&y&z&a&b&c&d&e&f&g&h&i&j&k&l&m&n&o&p&q&r&s&t\\
+    V&v&w&x&y&z&a&b&c&d&e&f&g&h&i&j&k&l&m&n&o&p&q&r&s&t&u\\
+    W&w&x&y&z&a&b&c&d&e&f&g&h&i&j&k&l&m&n&o&p&q&r&s&t&u&v\\
+    X&x&y&z&a&b&c&d&e&f&g&h&i&j&k&l&m&n&o&p&q&r&s&t&u&v&w\\
+    Y&y&z&a&b&c&d&e&f&g&h&i&j&k&l&m&n&o&p&q&r&s&t&u&v&w&x\\
+    Z&z&a&b&c&d&e&f&g&h&i&j&k&l&m&n&o&p&q&r&s&t&u&v&w&x&y\\
+    \hline
+  \end{tabular}
+}
+\end{center}
+
+\subsection{Travail demandé}
+
+Pour toutes les questions, veiller à traiter convenablement les erreurs potentielles.
+\begin{enumerate}
+  \item Écrire une fonction qui permet la saisie du message à traiter, du mot-clef et d'un indicateur précisant le type d'opération à effectuer.
+  \item Écrire une fonction permettant d'initialiser la table de correspondance.
+  \item Écrire la fonction réalisant le chiffrage.
+  \item Écrire la fonction réalisant le déchiffrage.
+  \item Écrire une fonction \textit{main} qui assure le chiffrage et le déchiffrage d'un message. Le message initial et le message résultant seront affichés à l'écran.
+  \item Ré-écrire les fonctions de chiffrage et de déchiffrage sans utiliser la table de Vigenère. La correspondance des caractères sera réalisée par l'intermédiaire d'une fonction mathématique.
+\end{enumerate}

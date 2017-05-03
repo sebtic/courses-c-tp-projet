@@ -1,0 +1,65 @@
+\let\marvel@old@part\part
+\let\marvel@old@chapter\chapter
+\let\marvel@old@section\section
+\let\marvel@old@subsection\subsection
+\let\marvel@old@subsubsection\subsubsection
+\let\marvel@old@paragraph\paragraph
+\let\marvel@old@subparagraph\subparagraph
+
+\newcommand{\marvel@sectionning@sub@part}{chapter}
+\newcommand{\marvel@sectionning@sub@chapter}{section}
+\newcommand{\marvel@sectionning@sub@section}{subsection}
+\newcommand{\marvel@sectionning@sub@subsection}{subsubsection}
+\newcommand{\marvel@sectionning@sub@subsubsection}{paragraph}
+\newcommand{\marvel@sectionning@sub@paragraph}{subparagraph}
+\newcommand{\marvel@sectionning@sub@subparagraph}{block}
+
+\newcommand{\marvel@sectionning@current}{part}
+
+\def\marvel@sectionning#1{%
+    \def\marvel@sectionning@current{#1}%        
+    \expandafter\csname marvel@old@#1\endcsname%
+    % eat argument%\expandafter\@gobble%
+}
+
+\def\part{\marvel@sectionning{part}}
+\def\chapter{\marvel@sectionning{chapter}}
+\def\section{\marvel@sectionning{section}}
+\def\subsection{\marvel@sectionning{subsection}}
+\def\subsubsection{\marvel@sectionning{subsubsection}}
+\def\paragraph{\marvel@sectionning{paragraph}}
+\def\subparagraph{\marvel@sectionning{paragraph}}
+
+\def\marvel@sectionning@savecurrent{}
+
+\mode<article>
+
+\defbeamertemplate<article>*{frame begin}{marvel}{\def\marvel@sectionning@savecurrent{\marvel@sectionning@current}}
+\defbeamertemplate<article>*{frame end}{marvel}{\def\marvel@sectionning@current{\marvel@sectionning@savecurrent}}
+
+\defbeamertemplate<article>*{frametitle}{marvel}{%
+\csname\expandafter\csname marvel@sectionning@sub@\marvel@sectionning@current\endcsname\endcsname
+{\insertframetitle}%
+\par\noindent\emph{\insertframesubtitle}\par}
+ 
+    % Default article templates:
+%\defbeamertemplate<article>*{alerted text begin}{marvel}{\ifmmode\else\begin{itshape}\fi}
+%\defbeamertemplate<article>*{alerted text end}{marvel}{\ifmmode\else\end{itshape}\fi}
+%\defbeamertemplate<article>*{structure begin}{marvel}{\ifmmode\else\begin{bfseries}\fi}
+%\defbeamertemplate<article>*{structure end}{marvel}{\ifmmode\else\end{bfseries}\fi}
+\defbeamertemplate<article>*{block begin}{marvel}{\csname\expandafter\csname marvel@sectionning@sub@\marvel@sectionning@current\endcsname\endcsname%
+{\insertblocktitle}}
+\defbeamertemplate<article>*{block end}{marvel}{\par}
+\defbeamertemplate<article>*{block alerted begin}{marvel}{\csname\expandafter\csname marvel@sectionning@sub@\marvel@sectionning@current\endcsname\endcsname%
+{\insertblocktitle}}
+\defbeamertemplate<article>*{block alerted end}{marvel}{\par}
+\defbeamertemplate<article>*{block example begin}{marvel}{\csname\expandafter\csname marvel@sectionning@sub@\marvel@sectionning@current\endcsname\endcsname%
+{\insertblocktitle}}
+\defbeamertemplate<article>*{block example end}{marvel}{\par}
+
+
+\setbeamertemplate{frame}[marvel] 
+\setbeamertemplate{blocks}[marvel]
+\setbeamertemplate{frametitle}[marvel]
+
+\mode<all>

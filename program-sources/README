@@ -1,0 +1,13 @@
+Avaliable commands :
+
+make all : build the program
+make clean : clean the program
+make dist : build components destined to students and upload the files to a HTTP server
+make dist-clean : clean components destined to students
+make provided-all : build the binary part of the project where the provided implementation are hidden
+make provided-clean : clean the binary part
+
+
+Evaluation automatique des étudiants : cf répertoire students
+
+

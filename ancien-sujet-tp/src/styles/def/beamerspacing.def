@@ -1,0 +1,24 @@
+
+
+\def\@listi{\leftmargin\leftmargini
+            \topsep 0\p@% \@plus2\p@ \@minus2.5\p@
+            \parsep 0\p@
+            \itemsep 0\p@
+            }
+\let\@listI\@listi
+\def\@listii{\leftmargin\leftmarginii
+              \topsep    0\p@% \@plus1\p@ \@minus2\p@
+              \parsep    0\p@
+              \itemsep   0\p@%\parsep
+              }
+\def\@listiii{\leftmargin\leftmarginiii
+              \topsep    0\p@% \@plus1\p@ \@minus2\p@
+              \parsep    0\p@
+              \itemsep   0\p@%\parsep
+              }
+              
+              
+\renewcommand{\baselinestretch}{1}
+\arrayrulecolor{NavyBlue}
+\renewcommand{\arraystretch}{1.2}
+              

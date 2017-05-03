@@ -1,0 +1,367 @@
+\chapter{TD7\&TP8 : Gestion des clients}
+
+\section{Manipulation des enregistrements client}
+
+Les exercices suivants doivent vous permettre de remplir le fichier \ccode{CustomerRecord.c}.
+
+Soit les définitions suivantes permettant de déclarer les constantes et types de données associés à un enregistrement client.
+\begin{csource}
+/** The size of the name field */
+#define CUSTOMERRECORD_NAME_SIZE 70UL
+/** The size of the address field */
+#define CUSTOMERRECORD_ADDRESS_SIZE 130UL
+/** The size of the portalCode field */
+#define CUSTOMERRECORD_POSTALCODE_SIZE 20UL
+/** The size of the town field */
+#define CUSTOMERRECORD_TOWN_SIZE 90UL
+
+/** The size in bytes of all the packed fields of a CustomerRecord */
+#define CUSTOMERRECORD_SIZE (    CUSTOMERRECORD_NAME_SIZE + \
+                                 CUSTOMERRECORD_ADDRESS_SIZE + \
+                                 CUSTOMERRECORD_POSTALCODE_SIZE + \
+                                 CUSTOMERRECORD_TOWN_SIZE)
+
+/** A customer record */
+typedef struct {
+    /** The name */
+    char name[CUSTOMERRECORD_NAME_SIZE];
+    /** The address */
+    char address[CUSTOMERRECORD_ADDRESS_SIZE];
+    /** The postal code */
+    char postalCode[CUSTOMERRECORD_POSTALCODE_SIZE];
+    /** The Town */
+    char town[CUSTOMERRECORD_TOWN_SIZE];
+} CustomerRecord;
+\end{csource}
+
+\subsection{Accesseurs}
+
+Ecrire les fonctions suivantes qui permettent de modifier le contenu d'un champ d'un enregistrement.
+\begin{itemize}
+  \item \ccode{void CustomerRecord_setValue_name(CustomerRecord * record, const char * value)}
+\begin{csourcecorrection}
+void CustomerRecord_setValue_name(CustomerRecord * record, const char * value) {
+    copyStringWithLength(record->name, value, CUSTOMERRECORD_NAME_SIZE);
+}
+\end{csourcecorrection}
+	\item \ccode{void CustomerRecord_setValue_address(CustomerRecord * record, const char * value)}
+\begin{csourcecorrection}
+void CustomerRecord_setValue_address(CustomerRecord * record, const char * value) {
+    copyStringWithLength(record->address, value, CUSTOMERRECORD_ADDRESS_SIZE);
+}
+\end{csourcecorrection}
+\item \ccode{void CustomerRecord_setValue_postalCode(CustomerRecord * record, const char * value)}
+\begin{csourcecorrection}
+void CustomerRecord_setValue_postalCode(CustomerRecord * record, const char * value) {
+    copyStringWithLength(record->postalCode, value, CUSTOMERRECORD_POSTALCODE_SIZE);
+}
+\end{csourcecorrection}
+\item \ccode{void CustomerRecord_setValue_town(CustomerRecord * record, const char * value)}
+\begin{csourcecorrection}
+void CustomerRecord_setValue_town(CustomerRecord * record, const char * value) {
+    copyStringWithLength(record->town, value, CUSTOMERRECORD_TOWN_SIZE);
+}
+\end{csourcecorrection}
+\end{itemize}
+
+Ecrire les fonctions suivantes qui permettent d'obtenir une copie sur le tas de la valeur d'un champ d'un enregistrement.
+\begin{itemize}
+\item \ccode{char * CustomerRecord_getValue_name(CustomerRecord * record)}
+\begin{csourcecorrection}
+char * CustomerRecord_getValue_name(CustomerRecord * record) {
+    return duplicateString(record->name);
+}
+\end{csourcecorrection}
+\item \ccode{char * CustomerRecord_getValue_address(CustomerRecord * record)}
+\begin{csourcecorrection}
+char * CustomerRecord_getValue_address(CustomerRecord * record) {
+    return duplicateString(record->address);
+}
+\end{csourcecorrection}
+\item \ccode{char * CustomerRecord_getValue_postalCode(CustomerRecord * record)}
+\begin{csourcecorrection}
+char * CustomerRecord_getValue_postalCode(CustomerRecord * record) {
+    return duplicateString(record->postalCode);
+}
+\end{csourcecorrection}
+\item \ccode{char * CustomerRecord_getValue_town(CustomerRecord * record)}
+\begin{csourcecorrection}
+char * CustomerRecord_getValue_town(CustomerRecord * record) {
+    return duplicateString(record->town);
+}
+\end{csourcecorrection}
+\end{itemize}
+
+\subsection{Initialisation}
+
+Ecrire la fonction \ccode{void CustomerRecord_init(CustomerRecord * record)} qui initialise l'enregistrement fourni en paramètre.
+
+\begin{csourcecorrection}
+static void zeroTab(char * tab, int size) {
+    while (size > 0) {
+        *tab = '\0';
+        tab++;
+        size--;
+    }
+}
+void CustomerRecord_init(CustomerRecord * record) {
+    zeroTab(record->name, CUSTOMERRECORD_NAME_SIZE);
+    zeroTab(record->address, CUSTOMERRECORD_ADDRESS_SIZE);
+    zeroTab(record->postalCode, CUSTOMERRECORD_POSTALCODE_SIZE);
+    zeroTab(record->town, CUSTOMERRECORD_TOWN_SIZE);
+}
+\end{csourcecorrection}
+
+\subsection{Finalisation}
+
+Ecrire la fonction \ccode{void CustomerRecord_finalize(CustomerRecord * record)} qui finalise un enregistrement (libère les ressources qui ne sont plus nécessaires).
+
+\begin{csourcecorrection}
+void CustomerRecord_finalize(CustomerRecord * UNUSED( record)) {
+}
+\end{csourcecorrection}
+
+\subsection{Lecture à partir d'un fichier binaire}
+
+Ecrire la fonction \ccode{void CustomerRecord_read(CustomerRecord * record, FILE * file)} qui permet de lire le contenu d'un enregistrement à partir du fichier binaire et qui stocke les informations dans l'enregistrement. Le fichier binaire contient que des enregistrements de taille fixe de \ccode{CUSTOMERRECORD_SIZE} octets. On prendra soin de ne pas écrire d'octets de padding dans la fichier.
+
+\begin{csourcecorrection}
+void CustomerRecord_read(CustomerRecord * record, FILE * file) {
+    if (fread(record->name, CUSTOMERRECORD_NAME_SIZE, 1, file) != 1)
+        fatalError("CustomerRecord_Read: fread");
+
+    if (fread(record->address, CUSTOMERRECORD_ADDRESS_SIZE, 1, file) != 1)
+        fatalError("CustomerRecord_Read: fread");
+
+    if (fread(record->postalCode, CUSTOMERRECORD_POSTALCODE_SIZE, 1, file) != 1)
+        fatalError("CustomerRecord_Read: fread");
+
+    if (fread(record->town, CUSTOMERRECORD_TOWN_SIZE, 1, file) != 1)
+        fatalError("CustomerRecord_Read: fread");
+}
+\end{csourcecorrection}
+
+\subsection{Ecriture dans un fichier binaire}
+
+Ecrire la fonction \ccode{void CustomerRecord_write(CustomerRecord * record, FILE * file)} qui permet d'écrire le contenu d'un enregistrement dans un fichier binaire. Cette fonction est la réciproque de la précédente.
+
+\begin{csourcecorrection}
+void CustomerRecord_write(CustomerRecord * record, FILE * file) {
+    if (fwrite(record->name, CUSTOMERRECORD_NAME_SIZE, 1, file) != 1)
+        fatalError("CustomerRecord_Write: fwrite");
+
+    if (fwrite(record->address, CUSTOMERRECORD_ADDRESS_SIZE, 1, file) != 1)
+        fatalError("CustomerRecord_Write: fwrite");
+
+    if (fwrite(record->postalCode, CUSTOMERRECORD_POSTALCODE_SIZE, 1, file) != 1)
+        fatalError("CustomerRecord_Write: fwrite");
+
+    if (fwrite(record->town, CUSTOMERRECORD_TOWN_SIZE, 1, file) != 1)
+        fatalError("CustomerRecord_Write: fwrite");
+}
+\end{csourcecorrection}
+
+\section{Manipulation d'une base de clients}
+
+Les exercices suivants doivent vous permettre de remplir le fichier \ccode{CustomerDB.c}.
+
+Soit la structure de données suivante.
+\begin{csource}
+/** The structure which represents an opened customer database */
+typedef struct {
+    FILE * file; /**< The FILE pointer for the associated file */
+    int recordCount; /**< The number of record in the database */
+} CustomerDB;
+\end{csource}
+Cette structure de données joue un rôle similaire à \ccode{FILE} pour les fonctions d'E/S standard. Chaque fichier client ne peut être manipulé qu'en ayant une structure de ce type à disposition. La structure stocke :
+\begin{itemize}
+  \item un attribut \ccode{file} : c'est le lien vers le fichier ouvert;
+  \item un attribut \ccode{recordCount} : c'est le nombre d'enegistrement stocké dans le fichier client. Il est modifié au fur et à mesure des opérations sur le fichier client mais n'est écrit qu'à la fermeture du fichier.
+\end{itemize}
+
+Un fichier client est un fichier binaire dont le contenu est structuré de la façon suivante :
+\begin{itemize}
+  \item le fichier débute par un entier de type \ccode{int} stockant le nombre d'enregistrements valides du fichier client;
+  \item le reste du fichier est constitué des données des enregistrements clients mis bout à bout. Chaque enregistrement client à une taille fixe de \ccode{CUSTOMERRECORD_SIZE} octets.
+\end{itemize}
+
+\subsection{Création d'un fichier client}
+
+Ecrire la fonction \ccode{CustomerDB * CustomerDB_create(const char * filename)} qui crée et ouvre en lecture/écriture un fichier client et retourne une structure permettant de manipuler le contenu du fichier. En cas d'échec d'ouverture du fichier, la fonction renvoie \ccode{NULL} (le fonctionnement est similaire à la fonction \ccode{fopen}). Dans les autres cas d'erreurs, la programme se termine.
+
+\begin{csourcecorrection}
+CustomerDB * CustomerDB_create(const char * filename) {
+    CustomerDB * customerDB;
+    customerDB = (CustomerDB*) malloc(sizeof(CustomerDB));
+    if (customerDB == NULL)
+        fatalError("CustomerDB_Create: malloc failed");
+
+    customerDB->file = fopen(filename, "w+b");
+    if (customerDB->file == NULL) {
+        free(customerDB);
+        return NULL;
+    }
+
+    customerDB->recordCount = 0;
+    fseek(customerDB->file, 0, SEEK_SET);
+    if (fwrite(&customerDB->recordCount, sizeof(customerDB->recordCount), 1, customerDB->file) != 1) {
+        fclose(customerDB->file);
+        free(customerDB);
+        fatalError("CustomerDB_Create: fwrite failed");
+    }
+    return customerDB;
+}
+\end{csourcecorrection}
+
+\subsection{Ouverture d'un fichier client existant}
+
+Ecrire la fonction \ccode{CustomerDB * CustomerDB_open(const char * filename)} qui ouvre en lecture/écriture un fichier client existant et retourne une structure permettant de manipuler le contenu du fichier. En cas d'échec d'ouverture du fichier, la fonction renvoie \ccode{NULL} (le fonctionnement est similaire à la fonction \ccode{fopen}).  Dans les autres cas d'erreurs, la programme se termine.
+
+\begin{csourcecorrection}
+CustomerDB * CustomerDB_open(const char * filename) {
+    CustomerDB * customerDB;
+    customerDB = (CustomerDB*) malloc(sizeof(CustomerDB));
+    if (customerDB == NULL)
+        fatalError("CustomerDB_Open: malloc failed");
+
+    customerDB->file = fopen(filename, "r+b");
+    if (customerDB->file == NULL) {
+        free(customerDB);
+        return NULL;
+    }
+
+    fseek(customerDB->file, 0, SEEK_SET);
+    if (fread(&customerDB->recordCount, sizeof(customerDB->recordCount), 1, customerDB->file) != 1) {
+        fclose(customerDB->file);
+        free(customerDB);
+        fatalError("CustomerDB_Open: fread failed");
+    }
+    return customerDB;
+}
+\end{csourcecorrection}
+
+\subsection{Ouverture ou, à défaut, création d'un fichier client}
+
+Ecrire la fonction \ccode{CustomerDB * CustomerDB_openOrCreate(const char * filename)} qui ouvre en lecture/écriture un fichier client existant ou, si le fichier n'existe pas, crée et ouvre le fichier. La fonction retourne une structure permettant de manipuler le contenu du fichier. Cette fonction est une combinaison des deux fonctions précédentes.
+
+\begin{csourcecorrection}
+CustomerDB * CustomerDB_openOrCreate(const char * filename) {
+    CustomerDB * customerDB;
+    customerDB = CustomerDB_open(filename);
+    if (customerDB == NULL)
+        customerDB = CustomerDB_create(filename);
+    return customerDB;
+}
+\end{csourcecorrection}
+
+\subsection{Fermeture d'un fichier client}
+
+Ecrire la fonction \ccode{void CustomerDB_close(CustomerDB * customerDB)} qui ferme le fichier client et met à jours le nombre d'enregistrements de la base.
+
+\begin{csourcecorrection}
+void CustomerDB_close(CustomerDB * customerDB) {
+    if (customerDB != NULL) {
+        fseek(customerDB->file, 0, SEEK_SET);
+        if (fwrite(&customerDB->recordCount, sizeof(customerDB->recordCount), 1, customerDB->file)
+                != 1)
+            fatalError("CustomerDB_Close: fwrite failed");
+        fclose(customerDB->file);
+        free(customerDB);
+    }
+}
+\end{csourcecorrection}
+
+\subsection{Obtenir le nombre d'enregistrements clients}
+
+Ecrire la fonction \ccode{int CustomerDB_getRecordCount(CustomerDB * customerDB)} qui permet d'obtenir le \linebreak nom\-bre d'enregistrements clients d'un fichier client ouvert.
+
+\begin{csourcecorrection}
+int CustomerDB_getRecordCount(CustomerDB * customerDB) {
+    if (customerDB != NULL)
+        return customerDB->recordCount;
+    else
+        return 0;
+}
+\end{csourcecorrection}
+
+\subsection{Lecture d'un enregistrement}
+
+Ecrire la fonction \ccode{void CustomerDB_readRecord( CustomerDB  *  customerDB, int  recordIndex,} \linebreak\ccode{CustomerRecord * record)} qui permet de lire le \ccode{recordIndex}-ième enregistrement du fichier client et qui stocke les informations lues dans \ccode{record}.
+
+\begin{csourcecorrection}
+void CustomerDB_readRecord(CustomerDB * customerDB, int recordIndex,  CustomerRecord * record) {
+    if (customerDB != NULL) {
+        if (recordIndex < 0 || recordIndex >= customerDB->recordCount)
+            fatalError("CustomerDB_GetRecord: invalid index");
+        fseek(customerDB->file, (long) sizeof(customerDB->recordCount) + CUSTOMERRECORD_SIZE * recordIndex, SEEK_SET);
+        CustomerRecord_read(record, customerDB->file);
+    }
+}
+\end{csourcecorrection}
+
+\subsection{Ecriture d'un enregistrement}
+
+Ecrire la fonction \ccode{void CustomerDB_writeRecord(CustomerDB * customerDB, int recordIndex,}\linebreak\ccode{CustomerRecord * record)} qui permet d'écrire le \ccode{recordIndex}-ième enregistrement du fichier client. Le nombre d'enregistrements du fichier doit être mis à jours si cette écriture conduit à ajouter un enregistrement à la fin du fichier.
+
+\begin{csourcecorrection}
+void CustomerDB_writeRecord(CustomerDB * customerDB, int recordIndex, CustomerRecord * record) {
+    if (customerDB != NULL) {
+        if (recordIndex < 0 || recordIndex > customerDB->recordCount)
+            fatalError("CustomerDB_SetRecord: invalid index");
+        fseek(customerDB->file, (long) sizeof(customerDB->recordCount) + CUSTOMERRECORD_SIZE * recordIndex, SEEK_SET);
+        CustomerRecord_write(record, customerDB->file);
+        if (recordIndex == customerDB->recordCount)
+            customerDB->recordCount++;
+    }
+}
+\end{csourcecorrection}
+
+\subsection{Insertion d'un enregistrement au sein du fichier}
+
+Ecrire la fonction \ccode{void CustomerDB_insertRecord(CustomerDB * customerDB, int recordIndex,}\linebreak\ccode{CustomerRecord * record)} qui insère le contenu d'un enregistrement à la position \ccode{recordIndex}.
+
+\begin{csourcecorrection}
+void CustomerDB_insertRecord(CustomerDB * customerDB, int recordIndex, CustomerRecord * record) {
+    if (customerDB != NULL) {
+        int i;
+        CustomerRecord temp;
+        CustomerRecord_init(&temp);
+        for (i = CustomerDB_getRecordCount(customerDB); i > recordIndex; --i) {
+            CustomerDB_readRecord(customerDB, i - 1, &temp);
+            CustomerDB_writeRecord(customerDB, i, &temp);
+        }
+        CustomerDB_writeRecord(customerDB, recordIndex, record);
+        CustomerRecord_finalize(&temp);
+    }
+}
+\end{csourcecorrection}
+
+\subsection{Ajout d'un enregistrement à la fin}
+
+Ecrire la fonction \ccode{void CustomerDB_appendRecord(CustomerDB * customerDB, CustomerRecord *}\linebreak \ccode{record)} qui ajoute un enregistrement à la fin du fichier clients.
+
+\begin{csourcecorrection}
+void CustomerDB_appendRecord(CustomerDB * customerDB, CustomerRecord * record) {
+    CustomerDB_insertRecord(customerDB, CustomerDB_getRecordCount(customerDB), record);
+}
+\end{csourcecorrection}
+
+\subsection{Suppression d'un enregistrement}
+
+Ecrire la fonction \ccode{void CustomerDB_removeRecord(CustomerDB * customerDB, int recordIndex)} qui permet de supprimer l'enregistrement se trouvant à la position \ccode{recordIndex} du fichier client. On ne cherchera pas à redimensionner le fichier.
+
+\begin{csourcecorrection}
+void CustomerDB_removeRecord(CustomerDB * customerDB, int recordIndex) {
+    if (customerDB != NULL) {
+        CustomerRecord temp;
+        int i;
+        CustomerRecord_init(&temp);
+        for (i = recordIndex; i < CustomerDB_getRecordCount(customerDB) - 1; ++i) {
+            CustomerDB_readRecord(customerDB, i + 1, &temp);
+            CustomerDB_writeRecord(customerDB, i, &temp);
+        }
+        customerDB->recordCount--;
+        CustomerRecord_finalize(&temp);
+    }
+}
+\end{csourcecorrection}

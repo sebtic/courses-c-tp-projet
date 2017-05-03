@@ -1,0 +1,186 @@
+
+
+% base : correction/noncorrection
+% c, c++, Java, bash, javascript
+
+\ifbool{marvel@french}{
+	\renewcommand{\lstlistingname}{Code source}%
+	\renewcommand{\lstlistlistingname}{Liste des codes sources}%
+}%
+{%
+	\renewcommand{\lstlistingname}{Source code}%
+	\renewcommand{\lstlistlistingname}{List of source codes}%
+}
+
+\ifbool{marvel@blackandwhite}{
+	\colorlet{marvel@lst@basiccolor}{black}
+	\colorlet{marvel@lst@keywordcolor}{black}
+	\colorlet{marvel@lst@commentcolor}{black}
+	\colorlet{marvel@lst@numberingcolor}{black}
+	\colorlet{marvel@lst@backgroundcolor}{gray!20}
+	\colorlet{marvel@lst@framecolor}{black}
+	\colorlet{marvel@lst@linebreakcolor}{black}
+	\colorlet{marvel@lstinline@basiccolor}{black}
+	\colorlet{marvel@lstinline@keywordcolor}{black}
+	\colorlet{marvel@lstinline@commentcolor}{black}
+}%
+{
+	\colorlet{marvel@lst@basiccolor}{black}
+	\colorlet{marvel@lst@keywordcolor}{red}
+	\colorlet{marvel@lst@commentcolor}{NavyBlue}
+	\colorlet{marvel@lst@numberingcolor}{blue}
+	\colorlet{marvel@lst@backgroundcolor}{gray!20}
+	\colorlet{marvel@lst@framecolor}{blue!50}
+	\colorlet{marvel@lst@linebreakcolor}{red}
+	\colorlet{marvel@lstinline@basiccolor}{red}
+	\colorlet{marvel@lstinline@keywordcolor}{red}
+	\colorlet{marvel@lstinline@commentcolor}{red}
+}
+
+
+\newcommand{\marvel@lst@basicstyle}{\scriptsize\color{marvel@lst@basiccolor}}
+\newcommand{\marvel@lst@keywordstyle}{\color{marvel@lst@keywordcolor}\bf}
+\newcommand{\marvel@lst@commentstyle}{\color{marvel@lst@commentcolor}\it}
+\newcommand{\marvel@lst@stringstyle}{\upshape}
+\newcommand{\marvel@lst@numberingstyle}{\tiny\color{marvel@lst@numberingcolor}}
+\newcommand{\marvel@lst@prebreak}{\mbox{\hbox{\large\color{marvel@lst@linebreakcolor} \Leftscissors}}}
+\newcommand{\marvel@lst@postbreak}{\mbox{\hbox{\color{marvel@lst@linebreakcolor}$\hookrightarrow$ }}}
+\newcommand{\marvel@lstinline@basicstyle}{\color{marvel@lstinline@basiccolor}}
+\newcommand{\marvel@lstinline@keywordstyle}{\color{marvel@lstinline@keywordcolor}\bf}
+\newcommand{\marvel@lstinline@commentstyle}{\color{marvel@lstinline@commentcolor}\it}
+\newcommand{\marvel@lstinline@stringstyle}{\upshape}
+
+
+\lstset{%
+    literate={è}{{\`e}}1%
+             {é}{{\'e}}1%
+             {ë}{{\"e}}1%
+             {ê}{{\^e}}1%
+             {°}{{\textdegree}}1%
+             {à}{{\`a}}1%            
+             {ù}{{\`u}}1%
+             {ù}{{\`u}}1%
+             {î}{{\^i}}1%             
+}
+
+\newcommand{\marvel@lst@configure}[1]{%
+	\lstset{%
+		showspaces=false,%
+		showstringspaces=false,%
+		tabsize=2,%
+		showlines=false,%
+		emptylines=1,%
+		basicstyle=\marvel@lst@basicstyle,%
+		keywordstyle=\marvel@lst@keywordstyle,%
+		commentstyle=\marvel@lst@commentstyle,%
+		stringstyle=\marvel@lst@stringstyle,%
+		numbers=left,%
+		numberstyle=\marvel@lst@numberingstyle,%
+		xleftmargin=20pt,%
+		xrightmargin=4pt,%
+		numbersep=8pt,%
+		frame=single,%
+		backgroundcolor=\color{marvel@lst@backgroundcolor},%
+		rulecolor=\color{marvel@lst@framecolor},%
+		breaklines=true,%
+		breakatwhitespace,
+		breakautoindent,%
+		breakindent=40pt,%
+		prebreak=\marvel@lst@prebreak,%
+		postbreak=\marvel@lst@postbreak,%
+		escapeinside={µ}{µ},%
+		inputencoding=utf8,%
+		extendedchars=true,%
+		#1}%    
+}
+
+\lstloadlanguages{c,c++,java,bash,make,xml,sql}
+
+\lstdefinelanguage{javascript}{
+  keywords={break,case,catch,continue,debugger,default,delete,do,else,finally,for,function,if,in,instanceof,new,return,switch,this,throw,try,typeof,var,void,while,with},  
+  ndkeywords={class,export,boolean,throw,implements,import,this},
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]',
+  morestring=[b]"
+}
+
+\newcommand{\marvel@lst@defaultlanguage}{c}
+\marvel@lst@configure{language=\marvel@lst@defaultlanguage}
+
+\lstnewenvironment{source}[1][\marvel@lst@defaultlanguage]{\marvel@lst@configure{language=#1}\csname\@lst @SetFirstNumber\endcsname}{\csname\@lst @SaveFirstNumber\endcsname}
+\lstnewenvironment{csource}[1][]{\marvel@lst@configure{language=c,#1}\csname\@lst @SetFirstNumber\endcsname}{\csname\@lst @SaveFirstNumber\endcsname}
+\lstnewenvironment{cppsource}[1][]{\marvel@lst@configure{language=c++,#1}\csname\@lst @SetFirstNumber\endcsname}{\csname\@lst @SaveFirstNumber\endcsname}
+\lstnewenvironment{javasource}[1][]{\marvel@lst@configure{language=java,#1}\csname\@lst @SetFirstNumber\endcsname}{\csname\@lst @SaveFirstNumber\endcsname}
+\lstnewenvironment{bashsource}[1][]{\marvel@lst@configure{language=bash,#1}\csname\@lst @SetFirstNumber\endcsname}{\csname\@lst @SaveFirstNumber\endcsname}
+\lstnewenvironment{makesource}[1][]{\marvel@lst@configure{language=make,#1}\csname\@lst @SetFirstNumber\endcsname}{\csname\@lst @SaveFirstNumber\endcsname}
+\lstnewenvironment{javascriptsource}[1][]{\marvel@lst@configure{language=javascript,#1}\csname\@lst @SetFirstNumber\endcsname}{\csname\@lst @SaveFirstNumber\endcsname}
+\lstnewenvironment{xmlsource}[1][]{\marvel@lst@configure{language=xml,#1}\csname\@lst @SetFirstNumber\endcsname}{\csname\@lst @SaveFirstNumber\endcsname}
+\lstnewenvironment{sqlsource}[1][]{\marvel@lst@configure{language=sql,#1}\csname\@lst @SetFirstNumber\endcsname}{\csname\@lst @SaveFirstNumber\endcsname}
+
+\lstdefinestyle{marvel@lst@base}{basicstyle=\marvel@lstinline@basicstyle,%
+            keywordstyle=\marvel@lstinline@keywordstyle,%
+            commentstyle=\marvel@lstinline@commentstyle,%
+            stringstyle=\marvel@lstinline@stringstyle,%
+            inputencoding=utf8,%
+            extendedchars=true,%
+            showspaces=false,%
+            showstringspaces=false,%
+            escapeinside={µ}{µ}}
+
+\def\ccode#1{\texorpdfstring{\lstinline[style=marvel@lst@base,language=c]{#1}}{#1}}
+\def\cppcode#1{\texorpdfstring{\lstinline[style=marvel@lst@base,language=c++]{#1}}{#1}}
+\def\javacode#1{\texorpdfstring{\lstinline[style=marvel@lst@base,language=java]{#1}}{#1}}
+\def\bashcode#1{\texorpdfstring{\lstinline[style=marvel@lst@base,language=bash]{#1}}{#1}}
+\def\makecode#1{\texorpdfstring{\lstinline[style=marvel@lst@base,language=make]{#1}}{#1}}
+\def\javascriptcode#1{\texorpdfstring{\lstinline[style=marvel@lst@base,language=javascript]{#1}}{#1}}
+\def\xmlcode#1{\texorpdfstring{\lstinline[style=marvel@lst@base,language=xml]{#1}}{#1}}
+\def\sqlcode#1{\texorpdfstring{\lstinline[style=marvel@lst@base,language=sql]{#1}}{#1}}
+
+% make commands robust to be usable in other command like block or sectionning
+\MakeRobustCommand\ccode
+\MakeRobustCommand\cppcode
+\MakeRobustCommand\javacode
+\MakeRobustCommand\bashcode
+\MakeRobustCommand\makecode
+\MakeRobustCommand\javascriptcode
+\MakeRobustCommand\xmlcode
+\MakeRobustCommand\sqlcode
+
+\newsavebox{\marvel@correctionbox}
+
+\ifbool{marvel@correction}{%
+	\lstnewenvironment{sourcecorrection}[1][\marvel@lst@defaultlanguage]{\marvel@lst@configure{language=#1}\csname\@lst @SetFirstNumber\endcsname}{\csname\@lst @SaveFirstNumber\endcsname}%
+	\lstnewenvironment{csourcecorrection}[1][]{\marvel@lst@configure{language=c,#1}\csname\@lst @SetFirstNumber\endcsname}{\csname\@lst @SaveFirstNumber\endcsname}%
+	\lstnewenvironment{cppsourcecorrection}[1][]{\marvel@lst@configure{language=c++,#1}\csname\@lst @SetFirstNumber\endcsname}{\csname\@lst @SaveFirstNumber\endcsname}%
+	\lstnewenvironment{javasourcecorrection}[1][]{\marvel@lst@configure{language=java,#1}\csname\@lst @SetFirstNumber\endcsname}{\csname\@lst @SaveFirstNumber\endcsname}%
+	\lstnewenvironment{bashsourcecorrection}[1][]{\marvel@lst@configure{language=bash,#1}\csname\@lst @SetFirstNumber\endcsname}{\csname\@lst @SaveFirstNumber\endcsname}%
+	\lstnewenvironment{makesourcecorrection}[1][]{\marvel@lst@configure{language=make,#1}\csname\@lst @SetFirstNumber\endcsname}{\csname\@lst @SaveFirstNumber\endcsname}
+	\lstnewenvironment{javascriptsourcecorrection}[1][]{\marvel@lst@configure{language=javascript,#1}\csname\@lst @SetFirstNumber\endcsname}{\csname\@lst @SaveFirstNumber\endcsname}%
+	\lstnewenvironment{xmlsourcecorrection}[1][]{\marvel@lst@configure{language=xml,#1}\csname\@lst @SetFirstNumber\endcsname}{\csname\@lst @SaveFirstNumber\endcsname}%
+	\lstnewenvironment{sqlsourcecorrection}[1][]{\marvel@lst@configure{language=sql,#1}\csname\@lst @SetFirstNumber\endcsname}{\csname\@lst @SaveFirstNumber\endcsname}%
+}%
+{
+	\excludecomment{sourcecorrection}%
+	\excludecomment{csourcecorrection}%
+	\excludecomment{cppsourcecorrection}%
+	\excludecomment{javasourcecorrection}%
+	\excludecomment{bashsourcecorrection}%
+	\excludecomment{makesourcecorrection}%
+	\excludecomment{javascriptsourcecorrection}%
+	\excludecomment{xmlsourcecorrection}%
+	\excludecomment{sqlsourcecorrection}%
+}
+
+
+
+
+
+
+
+
+
+
+
+

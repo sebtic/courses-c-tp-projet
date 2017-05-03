@@ -1,0 +1,91 @@
+
+\let\marvel@old@part\part
+\let\marvel@old@chapter\chapter
+\let\marvel@old@section\section
+\let\marvel@old@subsection\subsection
+\let\marvel@old@subsubsection\subsubsection
+\let\marvel@old@paragraph\paragraph
+\let\marvel@old@subparagraph\subparagraph
+
+%\def\part{\marvel@old@chapter}
+\def\chapter{\marvel@old@section}
+\def\section{\marvel@old@subsection}
+\def\subsection{\marvel@old@subsubsection}
+\def\subsubsection{\marvel@old@paragraph}
+\def\paragraph{\marvel@old@subparagraph}
+\def\subparagraph{}
+
+\newcommand{\marvel@beamer@partmark}{
+	\begin{marvelboxes}{%
+                    lower=marvelboxes part booktitle,%
+                    lowerborder=marvelboxes part booktitle border,%
+                    lowershadow=marvelboxes part booktitle shadow,%
+                    }{}
+        \center\usebeamerfont{part booktitle}\marvel@title\par%
+        \ifx\marvel@subtitle\@empty%
+        \else%
+            \vskip0.25em%
+            {\usebeamerfont{part booksubtitle}\marvel@subtitle\par}%
+        \fi%
+        \vspace{0.2cm}
+        \hfill\begin{marvelboxes}{width=0.95\hsize,%
+                    lower=marvelboxes part title,%
+                    lowerborder=marvelboxes part title border,%
+                    lowershadow=marvelboxes part title shadow,%
+                    }{}
+            \center{\usebeamerfont{part name}\insertpart\par}
+        \end{marvelboxes}\hfill\hbox{}\par
+    \end{marvelboxes}%
+}
+
+\newcommand{\marvel@beamer@sectionmark}{
+	\begin{marvelboxes}{%
+                    lower=marvelboxes section,%
+                    lowerborder=marvelboxes section border,%
+                    lowershadow=marvelboxes section shadow,%
+                    }{}%
+        \center\usebeamerfont{section}\insertsection\par%    
+        \ifx\insertsubsection\@empty%
+        \else%    
+         \vspace{0.2cm}%
+         \hfill\begin{marvelboxes}{width=0.95\hsize,%
+                     lower=marvelboxes subsection,%
+                     lowerborder=marvelboxes subsection border,%
+                     lowershadow=marvelboxes subsection shadow,%
+                     }{}%
+             \center{\usebeamerfont{subsection}\insertsubsection\par}%
+         \end{marvelboxes}\hfill\hbox{}\par%
+        \fi
+    \end{marvelboxes}%
+}
+
+\AtBeginPart{
+    \begin{frame}[plain]
+        \vfill
+        \marvel@beamer@partmark
+        \tableofcontents[hideallsubsections]
+        \vfill    
+    \end{frame}
+}
+
+\AtBeginSection[]{
+  \begin{frame}[plain]%
+    \vfill%
+    \marvel@beamer@partmark
+    \vfill
+    \marvel@beamer@sectionmark
+    \vfill%
+  \end{frame}
+}
+
+\AtBeginSubsection[]{
+    \begin{frame}[plain]%
+        \vfill%
+        \marvel@beamer@partmark
+        \vfill
+        \marvel@beamer@sectionmark
+        \vfill%
+    \end{frame} 
+}
+ 
+

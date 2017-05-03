@@ -1,0 +1,9 @@
+\newcommand{\frontmatter}{}
+\newcommand{\mainmatter}{}
+\newcommand{\backmatter}{}
+
+\usepackage{beamerthemesplit}
+\usepackage{beamerbaseauxtemplates}
+
+\usefonttheme{serif}
+\usefonttheme{structurebold}

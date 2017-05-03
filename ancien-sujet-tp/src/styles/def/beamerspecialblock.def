@@ -1,0 +1,46 @@
+
+\newcommand{\marvel@setupbeamerspecialblock}[1]{%
+    \setbeamercolor*{marvelboxes upper #1}{fg=marvel@#1@titlecolor,bg=marvel@#1@titlebackgroundcolor}%
+    \setbeamercolor*{marvelboxes lower #1}{fg=marvel@#1@textcolor,bg=marvel@#1@backgroundcolor}%
+    \setbeamercolor*{marvelboxes upper border #1}{use=marvelboxes uppper,fg=marvel@#1@rulecolor}%
+    \setbeamercolor*{marvelboxes lower border #1}{use=marvelboxes upper,fg=marvel@#1@rulecolor!90!black}%
+    \setbeamercolor*{marvelboxes upper shadow #1}{use=marvelboxes upper,fg=marvel@#1@rulecolor!20!white,bg=marvel@#1@titlebackgroundcolor!50!white}%
+    \setbeamercolor*{marvelboxes lower shadow #1}{use=marvelboxes upper,fg=marvel@#1@rulecolor!20!white,bg=marvel@#1@titlebackgroundcolor!50!white}%
+}
+
+\marvel@setupbeamerspecialblock{warning}
+\marvel@setupbeamerspecialblock{goodpractices}
+\marvel@setupbeamerspecialblock{commonerrors}
+\marvel@setupbeamerspecialblock{landmark}
+\marvel@setupbeamerspecialblock{criticalerror}
+\marvel@setupbeamerspecialblock{tipsandhints}
+\marvel@setupbeamerspecialblock{exercice}
+\marvel@setupbeamerspecialblock{definition}
+\marvel@setupbeamerspecialblock{theorem}
+\marvel@setupbeamerspecialblock{essential}
+
+
+\newenvironment{marvel@specialblock}[1]%
+{
+  \ifbool{marvel@#1@numbered}{\refstepcounter{marvel@#1@counter}}{}
+  \par\vskip\medskipamount%
+  \begin{marvelboxes}{  upper=marvelboxes upper #1,%
+                        lower=marvelboxes lower #1 ,%
+                        upperborder=marvelboxes upper border #1,%
+                        lowerborder=marvelboxes lower border #1,%
+                        uppershadow=marvelboxes upper shadow #1,%
+                        lowershadow=marvelboxes lower shadow #1%
+                        }{\raggedright\usebeamerfont*{block title}%
+                            \tabcolsep=2bp%
+                            \begin{tabu}{X[-1,l,m]X[l,m]}%
+                            \expandafter\csname marvel@#1@icon\endcsname&%
+                            \expandafter\csname marvel@#1@title\endcsname%
+                            \ifbool{marvel@#1@numbered}{~\arabic{marvel@#1@counter}}{}%
+                            \end{tabu}%
+                        }%
+   \raggedright%
+   \usebeamerfont{block body}%
+}%
+{
+  \end{marvelboxes}\vskip\smallskipamount
+}

@@ -1,0 +1,47 @@
+Semi-automatic students evaluation
+
+1) Put all the tar.gz file for each student in this directory
+2) run the ../make/eval-student.sh script in turn with the following parameters :
+  a) prepare : extract and preprocess the archives
+  b) batch : do automatic testing (compile, run...)
+  c) valgrind : display valgrind results for each project and ask for an evaluation
+  d) variables : display the name of all variables of the project and ask for an evaluation (coherency, naming convention)
+  e) end : build the final CSV file with all the results for all students
+3) import the CSV file with LibreOffice
+4) copy/paste the content in the first form of the ODS file
+5) complete the two last column :
+  a) Séances suivies : comptabilise les séances suivies par l'étudiant (il faut compter une ABJ comme une séance suivie)
+  b) Travail %Travail : évalue la quantité de préparation des exercices entre 0 et 1 (Attention : préparation est différent de correcte)
+
+
+ODS structure : 
+1) Poids et difficultés des fonctions : ligne 1 de la feuille Numeric
+2) Nombre de séances à suivre : cellule DZ1 de la feuille Numeric
+3) Poids des différents modules/aspects : F7:AF7 de la feuille Summary
+4) Calcul de la note :
+
+  Module = (moyenne pondérée (Numeric.Ligne 1) des fonctions implementées) * poids du "module" (Summary.Ligne 7)
+  ModuleExecutable = Module * s'exécute sans erreur (Numeric.Colonne DJ à DU) * poids du "module s'exécute" / poids du "module"
+    Le test d'exécutabilité ne considère que les fonctions du module, toutes les autres sont implémentées via les fonctions provided
+
+  ExecutableEnDebug = s'execute en mode debug * poids
+  ExecutableEnRelease = s'execute en mode release * poids
+  
+  Base = compile + somme par module [Module + ModuleExecutable] + ExecutableEnDebug + ExecutableEnRelease
+
+  NoteFinale = Arrondi (
+			Poids valgrind * Base * TauxReussiteValgrind +
+			Poids variables * Base * TauxReussiteVariables +
+			Poids séances suivies * Base * TauxDePresences + 
+			Poids préparation * Base * TauxPréparation + 
+			Poids du reste * Base +
+			Pénalités
+		)
+
+  Les poids sont définis dans Summary.M1 à M5
+  Les pénalités sont en colonne Summary.AK
+
+L'objectif de la notation :
+- inciter à faire un maximum de fonctions
+- mais il la qualité et la méthode est importante
+Faire tout cradement ne garanti pas une bonne note !!
